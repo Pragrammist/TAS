@@ -1,0 +1,111 @@
+@model AdminPageRouteDataModel
+
+<script>
+    $(function(){
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const group = urlParams.get('group');
+        const url = "/groups/" + group;
+        $.get(url, function(data){
+            let groupInSelect;
+            let courseInSelect;
+            let specInSelect;
+            let condType;
+            let name;
+            let id;
+            for(let i = 0; i < data.length; i++)
+            {
+                let student = data[i];
+                id = student.id;
+                groupInSelect = student.group;
+                courseInSelect = student.course;
+                specInSelect = student.speciality;
+                condType = student.conditionType;
+                name = student.name;
+
+                let trEl = $("<tr>").attr("id", "student-"+id);
+
+                let inputNameEl = $("<input>").attr("value", name);
+                let nameTdEl = $("<td>").attr("id", "student-name-"+id).append(inputNameEl);
+                trEl.append(nameTdEl);
+                
+
+                let groupOptionObj = $("<option selected/>").text(groupInSelect).val(groupInSelect);
+                let selectGroupEl = $("<select>").append(groupOptionObj);
+                let groupTdEl = $("<td>").attr("id", "student-group-"+id).append(selectGroupEl);
+                trEl.append(groupTdEl);
+
+
+                let selectCourseEl = $("<select>")
+                    .append("<option>1</option>")
+                    .append("<option>2</option>")
+                    .append("<option>3</option>")
+                    .append("<option>4</option>")
+                    .append("<option>5</option>");
+                selectCourseEl.val(courseInSelect);
+                let courseTdEl = $("<td>").attr("id", "student-course-"+id).append(selectCourseEl);
+                trEl.append(courseTdEl);
+
+
+                let specOptionObj = $("<option selected/>").text(specInSelect).val(specInSelect);
+                let selectSpecEl = $("<select>").append(specOptionObj);
+                let tdSpecEl = $("<td>").attr("id","student-specialization-"+id).append(selectSpecEl);
+                trEl.append(tdSpecEl);
+                
+
+                let selectCondEl = $("<select>")
+                    .append("<option>Беспл</option>")
+                    .append("<option>Пл</option>");
+                selectCondEl.val(condType);
+                let tdCondEl = $("<td>").attr("id", "student-cond-"+id);
+
+
+                let buttonDelEl = $('<button type="button">Удалить</button>').attr("id", "b-del-"+id);
+                let tdEl = $("<td>").append(buttonDelEl);
+                trEl.append(tdEl);
+            }
+            
+            
+            
+           
+
+
+            
+        });
+    });    
+</script>
+<option></option>
+<div>
+    <table  class="students-table" cellspacing="5" cellpadding="10" width="auto">
+        <tr class="students-table-headers">
+            <th>ФИО</th>
+            <th>ГРУППА</th>
+            <th>КУРС</th>
+            <th>Специальность</th>
+            <th>Платная/Бесплатная</th>
+        </tr>
+        <tr>
+            
+        </tr>
+        <tr>
+            <td>
+                <div>
+                    <input type="text" value="" name="" id="">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+                    <button type="submit">Сохранить</button>
+                </div>
+            </td>
+            <td>
+                <button>Следующая</button>
+            </td>
+            <td>
+                <button>Назад</button>
+            </td>
+        </tr>
+    </table>
+</div>

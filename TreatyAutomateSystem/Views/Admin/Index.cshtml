@@ -1,0 +1,68 @@
+<script>
+    $(function(){
+        $("#search-group-index").keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                let groupToSearch = $("#search-group-index").val();
+            
+                let matched = /^[0-9]+$/.test(groupToSearch);
+                if(!matched)
+                    return;
+                
+                let searchUrl = "/Admin/Students?group=" + groupToSearch
+
+                window.location.href = searchUrl;    
+            }
+        });
+    });
+</script>
+
+
+@model AdminPageRouteDataModel
+
+@{
+    var calculatedPartialViewName = $"_{Model.PageType.ToString()}";
+}
+
+@section Header
+{
+    <div class="header-el">
+        <a asp-action="Index" asp-controller="Home">Главная</a>
+    </div>
+    <div class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Админка(справочник)</a>
+    </div>
+    <div class="header-el">
+        <input type="search" name="" id="search-group-index" placeholder="номер группы">
+    </div>
+    <div class="header-el">
+        <input type="search" name="" id="" placeholder="ФИО студента">
+    </div>
+}
+
+@section LSideBar
+{
+    
+}
+<ul>
+    <li class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups">Группы</a>
+    </li class="header-el">
+    <li class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Courses">Курсы</a>
+    </li class="header-el">
+    <li class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Специальности</a>
+    </li>
+    <li class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies">Компании</a>
+    </li>
+    <li class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties">Шаблоны договоров(студенты)</a>
+    </li>
+    <li class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.CmpTreaties">Шаблоны договоров(компании)</a>
+    </li>
+</ul>
+@await Html.PartialAsync(calculatedPartialViewName, Model)
+

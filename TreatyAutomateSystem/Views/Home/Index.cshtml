@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "TAS";
+}
+
+
+<script src="lib/jquery/dist/jquery.min.js"></script>
+
+
+
+<object id="document-to-view" type="application/pdf" width="1024" height="800"></object>
+
+
+
+@section Header{
+    <div class="header-el">
+        <input type="file" name="" id="uploadFiles" accept=".xls" placeholder="выберете файл чтобы загрузить">
+    </div>
+    <div>
+        <button id="uploadButton">загрузить</button>
+    </div>
+    <div class="header-el">
+        <input type="search" name="" id="search-query" placeholder="ФИО студента(договор)">
+    </div>
+    <div class="header-el">
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Админка(справочник)</a>
+    </div>  
+}
+
+
+<script>
+    $(function(){
+        let searchResIsShown = false;
+        function ShowMessage(text)
+        {
+            let el = $("<li></li>").text(text);
+            $("#message").html(el);
+            $("#message").slideToggle("slow");
+            $("#message").delay(3000).slideToggle("slow");
+        }
+        $("#uploadButton").click(function(){
+            let files = $("#uploadFiles")[0].files;
+            if(files.length > 0 ){
+                let fd = new FormData();
+                fd.append("upload_file", true);
+                fd.append("file", files[0], files[0].name)
+                $.ajax(
+                    {
+                        url: "/files/upload",
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        type: "POST",
+                        success: function (data) {
+                            ShowMessage("Данные успешно загружены!");
+                            
+                        },
+                        error: function(textStatus){
+                            ShowMessage(":( Что-то пошло не так, проверьте файл!  )");
+                        }
+                    }
+                );
+                
+            }
+        });
+        function ChangeSearchResultAnimationAppear(data) {
+            if (searchResIsShown) 
+            {
+                $("#search-result").animate({ left: '500px', opacity: 0 }, 500, "", function() {
+                    $("#search-result").text("");
+                    for(let i = 0; i < data.length; i++){
+                        let contentEl = $("<li></li>").text(data[i]).addClass("name-s-result");
+                        $("#search-result").append(contentEl);
+                    }
+                });
+            }
+            $("#search-result").animate({left: '250px', opacity: 1});
+        }
+        function ChangeSearchResultAnimationDisappear() {
+            $("#search-result").animate({left: '0'});
+        }
+        function SearchNames(){
+            let val = $("#search-query").val();
+            if(val){
+                let query = "/students/" + val;
+                $.get(query,
+                function(data){
+                    
+                    if (!searchResIsShown) {
+                        $("#search-result").text("");
+                        for(let i = 0; i < data.length; i++){
+                            let contentEl = $("<li></li>").text(data[i]).addClass("name-s-result");
+                            $("#search-result").append(contentEl);
+                        }
+                        $("#search-result").slideDown("slow");
+                    }
+                    
+                    ChangeSearchResultAnimationAppear(data);
+                    searchResIsShown = true;
+                });
+            }
+        }
+        $("#search-query").click(SearchNames).keypress(function(event){
+          var keycode = (event.keyCode ? event.keyCode : event.which);
+          if(keycode == '13'){
+            SearchNames();  
+          }
+        });
+        $("#search-result").click(function() {
+            ChangeSearchResultAnimationDisappear();
+            $("#search-result").slideUp("slow");
+            searchResIsShown = false;
+        });
+        $("#search-result").on("click", ".name-s-result",function(){
+            let nameToSearch = this.innerText;
+            let query = "/files/generate/" +nameToSearch;
+            $.get(query , function(data){
+                $("#document-to-view").prop("data", data);
+            });
+        });
+        
+        
+    });
+</script>
