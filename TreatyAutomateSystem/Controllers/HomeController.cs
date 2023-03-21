@@ -49,6 +49,7 @@ public class HomeController : Controller
             return BadRequest();
         return new ObjectResult(res);
     }
+    
     [HttpGet("/files/generate/{name}")]
     public IActionResult GenerateDocx(string name)
     {

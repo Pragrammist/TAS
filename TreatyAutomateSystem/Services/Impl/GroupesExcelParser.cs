@@ -1,5 +1,3 @@
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using TreatyAutomateSystem.Models;
 using System.Linq;
 using System.Data;
@@ -93,11 +91,3 @@ public class GroupesExcelParser
     }
 }
 
-public class WordService
-{
-    public void InsertDataToTreate(string path)
-    {
-        var doc = WordprocessingDocument.Open(path, true);
-        
-    }
-}
