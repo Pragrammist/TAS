@@ -3,18 +3,16 @@ namespace TreatyAutomateSystem.Models;
 public class Student 
 {
     private Student(){}
-    public Student(string fio, Group group, FacultativeType facultative = default, StudyConditionType stdCond = default)
+    public Student(string fio, Group group, StudyConditionType stdCond)
     {
         Fio = fio;
         Group = group;
-        Facultative = facultative;
+        
         StdCond = stdCond;
     }
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
 
     public string Fio { get; set; } = null!;
-
-    public FacultativeType Facultative { get; set; } 
 
     public StudyConditionType StdCond { get; set; } 
 

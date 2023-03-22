@@ -9,7 +9,7 @@ public class Course
         Num = num;
     }
 
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
 
     public int Num { get; set; }
 }

@@ -1,10 +1,20 @@
+using LiteDB;
 using TreatyAutomateSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var conf = builder.Configuration;
+var con = "TAS.db";
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<StudentTreateService.Options>(s => 
+    new StudentTreateService.Options {
+        FolderPathToSave = "Docs",
+        TreatePlatePath = "Docs/treaty_template.docx"
+    });
+builder.Services.AddTransient<LiteDatabase>(s => new LiteDatabase(con));
+builder.Services.AddTransient<StudentTreateService>();
 builder.Services.AddTransient<GroupesExcelParser>();
+builder.Services.AddTransient<DbService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

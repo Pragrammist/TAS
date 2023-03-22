@@ -22,43 +22,55 @@ public class GroupesExcelParser
     
 
 
-    public IEnumerable<Student> ParseExcel(Stream stream)
+    public Group ParseExcel(Stream stream)
     {
         using (var reader = ExcelReaderFactory.CreateBinaryReader(stream))
         {
             var dataSet = reader.AsDataSet();
             var studentTable = dataSet.Tables[FIRST_SHEET_INDEX] ?? throw new InvalidOperationException("students file is empty");
             var fios = Fios(studentTable);
-            var courses = Courses(studentTable);
-            var faculs = Faculs(studentTable);
             var stdConds = Conds(studentTable);
-            var specCodes = SpecCodes(studentTable);
-            var specNames = SpecNames(studentTable);
-            var groups = Groups(studentTable);
-            return fios.Select((fio,i) => {
-                Speciality speciality = new Speciality(
-                    name: specNames[i],
-                    code: specCodes[i]
-                );
-                Course course = new Course(
-                    num: int.Parse(courses[i])
-                );
-
-                var group = new Group(
-                    speciality: speciality,
-                    course: course,
-                    name: groups[i]
-                );
-                return new Student(
+            var group = GetGroup(studentTable);
+            var students =  fios.Select((fio,i) => {
+                var student = new Student(
                     fio: fio,
                     group: group,
-                    facultative: faculs[i].ToLower() == "спо" ? FacultativeType.Sec : FacultativeType.Hgh,
                     stdCond: stdConds[i].ToLower() == "ко" ? StudyConditionType.Pd : StudyConditionType.Ste
                 );
+                return student;
             });
+            return group;
         }
     }
     
+    Group GetGroup(DataTable studentTable)
+    {
+        var fios = Fios(studentTable);
+        var specCodes = SpecCodes(studentTable);
+        var specNames = SpecNames(studentTable);
+        var faculs = Faculs(studentTable);
+        var groups = Groups(studentTable);
+        var courses = Courses(studentTable);
+        var group = fios.Select((fio,i) => {
+                    Speciality speciality = new Speciality(
+                        name: specNames[i],
+                        code: specCodes[i]
+                    );
+                    Course course = new Course(
+                        num: int.Parse(courses[i])
+                    );
+
+                    var group = new Group(
+                        speciality: speciality,
+                        course: course,
+                        facultative: faculs[i].ToLower() == "спо" ? FacultativeType.Sec : FacultativeType.Hgh,
+                        name: groups[i]
+                    );
+                    return group;
+                }
+            ).First();
+        return group;
+    }
 
     string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_FIO_CELL);
     

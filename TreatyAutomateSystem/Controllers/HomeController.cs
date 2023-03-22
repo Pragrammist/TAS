@@ -15,11 +15,12 @@ public class HomeController : Controller
         "Перчук Ира Павловна",
         "Карась Юля Игнатьевна"
     };
-    private readonly GroupesExcelParser _parser;
-
-    public HomeController(GroupesExcelParser parser)
+    readonly GroupesExcelParser _parser;
+    readonly DbService  _dbService;
+    public HomeController(GroupesExcelParser parser, DbService dbService)
     {
         _parser = parser;
+        _dbService = dbService;
     }
 
     public IActionResult Index()
@@ -30,14 +31,9 @@ public class HomeController : Controller
     [HttpPost("/files/upload")]
     public IActionResult UploadFile(IFormFile file)
     {
-
-        var stream = file.OpenReadStream();
-        try{
-            var students = _parser.ParseExcel(stream);
-        }catch{
-            return BadRequest("file is not valid");
-        }
-        
+        using var excelStream = file.OpenReadStream();
+        var group = _parser.ParseExcel(excelStream);
+        _dbService.AddOrUpdateGroup(group);   
         return new ObjectResult(students);
     }
 

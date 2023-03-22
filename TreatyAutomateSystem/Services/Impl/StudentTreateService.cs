@@ -2,6 +2,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using System.Data;
 using DocumentFormat.OpenXml;
+using LiteDB;
 
 namespace TreatyAutomateSystem.Services;
 
@@ -126,9 +127,4 @@ public class StudentTreateService
         var fileName = $"{student.Name}({student.Group}){extToSave}";
         return fileName;
     }
-        
-
-    
-    
-    
 }
