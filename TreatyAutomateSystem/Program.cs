@@ -1,4 +1,5 @@
 
+using Microsoft.EntityFrameworkCore;
 using TreatyAutomateSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddTransient<StudentTreateService.Options>(s =>
 builder.Services.AddTransient<StudentTreateService>();
 builder.Services.AddTransient<GroupesExcelParser>();
 builder.Services.AddTransient<DbService>();
+builder.Services.AddDbContext<TasDbContext>(c => c.UseSqlite("Data source=TAS.db"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

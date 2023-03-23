@@ -39,6 +39,7 @@ public class GroupesExcelParser
                 );
                 return student;
             });
+            group.Students = students.ToList();
             return group;
         }
     }
@@ -56,13 +57,10 @@ public class GroupesExcelParser
                         name: specNames[i],
                         code: specCodes[i]
                     );
-                    Course course = new Course(
-                        num: int.Parse(courses[i])
-                    );
 
                     var group = new Group(
                         speciality: speciality,
-                        course: course,
+                        courseNum: courses[i],
                         facultative: faculs[i].ToLower() == "спо" ? FacultativeType.Sec : FacultativeType.Hgh,
                         name: groups[i]
                     );

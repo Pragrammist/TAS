@@ -29,21 +29,21 @@ public class HomeController : Controller
     }
 
     [HttpPost("/files/upload")]
-    public IActionResult UploadFile(IFormFile file)
+    public async Task<IActionResult> UploadFile(IFormFile file)
     {
         using var excelStream = file.OpenReadStream();
         var group = _parser.ParseExcel(excelStream);
-        _dbService.AddOrUpdateGroup(group);   
+        await _dbService.AddOrUpdateGroup(group);   
         return new ObjectResult(students);
     }
 
     [HttpGet("/students/{query}")]
-    public IActionResult FindStudents(string query)
+    public async Task<IActionResult> FindStudentsAsync(string query)
     {
-        var res = students.Where(s => s.ToLower().Contains(query.ToLower()));
-        if (res.Count() == 0)
+        var students = (await _dbService.FindStudentsByQuery(query)).ToArray();
+        if (students.Count() == 0)
             return BadRequest();
-        return new ObjectResult(res);
+        return new ObjectResult(students);
     }
     
     [HttpGet("/files/generate/{name}")]

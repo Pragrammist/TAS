@@ -3,12 +3,12 @@ namespace TreatyAutomateSystem.Models;
 public class Group
 {
     private Group(){}
-    public Group(Speciality speciality, Course course, string name, FacultativeType facultative)
+    public Group(Speciality speciality, string name, string courseNum,FacultativeType facultative)
     {
         Speciality = speciality;
-        Course = course;
         Facultative = facultative;
         Name = name;
+        CourseNum = courseNum;
     }
     public int Id { get; set; }
 
@@ -16,7 +16,9 @@ public class Group
 
     public Speciality Speciality { get; set; } = null!;
 
-    public Course Course { get; set; } = null!;
+    public string CourseNum { get; set; } = null!;
 
     public FacultativeType Facultative { get; set; }
+
+    public ICollection<Student> Students { get; set; } = new List<Student>();
 }

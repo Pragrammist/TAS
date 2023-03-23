@@ -4,12 +4,12 @@ public class Course
 {
     Course(){}
 
-    public Course(int num)
+    public Course(string num)
     {
         Num = num;
     }
 
     public int Id { get; set; }
 
-    public int Num { get; set; }
+    public string Num { get; set; } = null!;
 }
