@@ -46,10 +46,10 @@ public class HomeController : Controller
         return new ObjectResult(students);
     }
     
-    [HttpGet("/files/generate/{name}")]
-    public IActionResult GenerateDocx(string name)
+    [HttpGet("/files/generate/{nameAndGroup}")]
+    public IActionResult GenerateDocx(string nameAndGroup)
     {
-        var student = students.FirstOrDefault(s => s.ToLower() == name.ToLower());
+        var student = students.FirstOrDefault(s => s.ToLower() == nameAndGroup.ToLower());
         string base64File;
         if (student is null)
             base64File = Convert.ToBase64String(System.IO.File.ReadAllBytes($"wwwroot/notfound.pdf"));
