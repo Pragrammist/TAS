@@ -17,7 +17,14 @@ public class DbService
             await AddOrUpdateGroup(group);
         }
     }
-    
+    public async Task UploadCompanies(IEnumerable<Company> companies)
+    {
+        foreach(var company in companies)
+        {
+            if(await _dbContext.Companies.FindAsync(company.Name) is null)
+                await _dbContext.Companies.AddAsync(company);
+        }
+    }
     public async Task AddOrUpdateGroup(Group group)
     {
         await PrepareGroup(group);

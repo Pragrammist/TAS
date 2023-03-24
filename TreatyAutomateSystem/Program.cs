@@ -15,6 +15,7 @@ builder.Services.AddTransient<StudentTreateService>();
 builder.Services.AddTransient<GroupesExcelParser>();
 builder.Services.AddTransient<DbService>();
 builder.Services.AddTransient<PracticeDataExcelParser>();
+builder.Services.AddTransient<OrganizationDataParser>();
 builder.Services.AddDbContext<TasDbContext>(c => c.UseSqlite("Data source=TAS.db"));
 var app = builder.Build();
 

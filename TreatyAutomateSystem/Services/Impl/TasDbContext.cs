@@ -10,7 +10,7 @@ public class TasDbContext : DbContext
 
     public DbSet<Speciality> Specialities { get; set; } = null!;
 
-
+    public DbSet<Company> Companies { get; set; } = null!;
 
     public TasDbContext(DbContextOptions options) : base(options)
     {
@@ -21,6 +21,7 @@ public class TasDbContext : DbContext
         modelBuilder.Entity<Student>().HasKey(k => k.Fio);
         modelBuilder.Entity<Group>().HasKey(g => g.Name);
         modelBuilder.Entity<Speciality>().HasKey(s => s.Code);
+        modelBuilder.Entity<Company>().HasKey(s => s.Name);
 
         modelBuilder.Entity<Group>().HasOne(g => g.Speciality).WithMany();
         modelBuilder.Entity<Group>().HasMany(g => g.Students).WithOne(s => s.Group);

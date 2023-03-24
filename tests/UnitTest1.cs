@@ -27,10 +27,10 @@ public class UnitTest1
         };
     
     [Fact]
-    public async Task Test1()
+    public  void Test1()
     {
-        var p = new PracticeDataExcelParser();
-        using var file = System.IO.File.OpenRead(@"/Users/macbook/Documents/dotnet/TAS/tests/список практик СПО 2022-23.xls");
+        var p = new OrganizationDataParser();
+        using var file = System.IO.File.OpenRead(@"/Users/macbook/Documents/dotnet/TAS/tests/Реквизиты предприятий.xls");
         var res = p.ParseExcel(file);
     }
 }

@@ -18,11 +18,16 @@ public class HomeController : Controller
     readonly GroupesExcelParser _parser;
     readonly DbService  _dbService;
     readonly PracticeDataExcelParser _practiceParser;
-    public HomeController(GroupesExcelParser parser, DbService dbService, PracticeDataExcelParser practiceParser)
+    readonly OrganizationDataParser _orgParser;
+    public HomeController(GroupesExcelParser parser,
+    DbService dbService, 
+    PracticeDataExcelParser practiceParser,
+    OrganizationDataParser orgParser)
     {
         _parser = parser;
         _dbService = dbService;
         _practiceParser = practiceParser;
+        _orgParser = orgParser;
     }
 
     public IActionResult Index()
@@ -36,7 +41,7 @@ public class HomeController : Controller
         using var excelStream = file.OpenReadStream();
         var group = _parser.ParseExcel(excelStream);
         await _dbService.AddOrUpdateGroup(group);   
-        return new ObjectResult(students);
+        return Ok();
     }
 
 
@@ -44,8 +49,9 @@ public class HomeController : Controller
     public async Task<IActionResult> UploadRikvizitFile(IFormFile file)
     {
         using var excelStream = file.OpenReadStream();
-          
-        return new ObjectResult("");
+        var comps = _orgParser.ParseExcel(excelStream);
+        await _dbService.UploadCompanies(comps);
+        return Ok();
     }
 
     [HttpPost("/files/uploadpractic")]

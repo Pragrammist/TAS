@@ -1,4 +1,4 @@
-namespace TreatyAutomateSystem.Models; 
+namespace TreatyAutomateSystem.Models;
 
 
 
