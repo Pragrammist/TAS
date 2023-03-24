@@ -13,16 +13,34 @@
 
 @section Header{
     <div class="header-el">
-        <input type="file" name="" id="uploadFiles" accept=".xls" placeholder="выберете файл чтобы загрузить">
+        <div>
+            <input type="file" name="" id="uploadGroupAndStudentsFile" accept=".xls" placeholder="Ученики и группа">
+        </div>
+        <div>
+            <button id="uploadGroupAndStudentsButton">Ученики и группа</button>
+        </div>
     </div>
     <div>
-        <button id="uploadButton">загрузить</button>
+        <div>
+            <input type="file" name="" id="uploadRekvizitFile" accept=".xls" placeholder="Реквизиты">
+        </div>
+        <div>
+            <button id="uploaduploadRekvizitButton">Реквизиты</button>
+        </div>
+    </div>
+    <div>
+        <div>
+            <input type="file" name="" id="uploadPracticeDataFile" accept=".xls" placeholder="Данные по практике">
+        </div>
+        <div>
+            <button id="uploadPracticeDataButton">Данные по практике</button>
+        </div>
     </div>
     <div class="header-el">
         <input type="search" name="" id="search-query" placeholder="ФИО студента(договор)">
     </div>
     <div class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Админка(справочник)</a>
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Админка</a>
     </div>  
 }
 
@@ -37,15 +55,17 @@
             $("#message").slideToggle("slow");
             $("#message").delay(3000).slideToggle("slow");
         }
-        $("#uploadButton").click(function(){
-            let files = $("#uploadFiles")[0].files;
+        function UploadFile(buttonId, fileId, urlUpload)
+        {
+            $(buttonId).click(function(){
+            let files = $(fileId)[0].files;
             if(files.length > 0 ){
                 let fd = new FormData();
                 fd.append("upload_file", true);
                 fd.append("file", files[0], files[0].name)
                 $.ajax(
                     {
-                        url: "/files/upload",
+                        url: urlUpload,
                         data: fd,
                         processData: false,
                         contentType: false,
@@ -55,13 +75,19 @@
                             
                         },
                         error: function(textStatus){
-                            ShowMessage(":( Что-то пошло не так, проверьте файл!  )");
+                            ShowMessage("): Что-то пошло не так, проверьте файл!");
                         }
                     }
                 );
-                
-            }
-        });
+                    
+                }
+            });
+        }
+        
+        UploadFile("#uploadGroupAndStudentsButton", "#uploadGroupAndStudentsFile", "/files/uploadgroup");
+        UploadFile("#uploaduploadRekvizitButton", "#uploadRekvizitFile", "/files/uploadrikvizit");
+        UploadFile("#uploadPracticeDataButton", "#uploadPracticeDataFile", "/files/uploadpractic");
+        
         function ChangeSearchResultAnimationAppear(data) {
             if (searchResIsShown) 
             {

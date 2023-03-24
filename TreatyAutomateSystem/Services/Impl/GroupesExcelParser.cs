@@ -101,3 +101,7 @@ public class GroupesExcelParser
     }
 }
 
+public class RikvizitxcelParser
+{
+    
+}

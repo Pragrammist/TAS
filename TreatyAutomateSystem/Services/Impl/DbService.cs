@@ -1,31 +1,6 @@
 using TreatyAutomateSystem.Models;
 using Microsoft.EntityFrameworkCore;
 namespace TreatyAutomateSystem.Services;
-
-public class TasDbContext : DbContext
-{
-    public DbSet<Student> Students { get; set; } = null!;
-
-    public DbSet<Group> Groups { get; set; } = null!;
-
-    public DbSet<Speciality> Specialities { get; set; } = null!;
-
-
-
-    public TasDbContext(DbContextOptions options) : base(options)
-    {
-        Database.EnsureCreated();
-    }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Student>().HasKey(k => k.Fio);
-        modelBuilder.Entity<Group>().HasKey(g => g.Name);
-        modelBuilder.Entity<Speciality>().HasKey(s => s.Code);
-
-        modelBuilder.Entity<Group>().HasOne(g => g.Speciality).WithMany();
-        modelBuilder.Entity<Group>().HasMany(g => g.Students).WithOne(s => s.Group);
-    }
-}
 public class DbService
 {
     
@@ -35,37 +10,78 @@ public class DbService
         _dbContext = dbContext;
     }
 
+    public async Task UploadManyGroups(IEnumerable<Group> groups)
+    {
+        foreach(var group in groups)
+        {
+            await AddOrUpdateGroup(group);
+        }
+    }
+    
     public async Task AddOrUpdateGroup(Group group)
     {
+        await PrepareGroup(group);
+
         var fGroup = await _dbContext.Groups
             .Include(i => i.Speciality)
             .Include(i => i.Students)
             .FirstOrDefaultAsync(g => g.Name == group.Name);
         
         
+        
         if(fGroup is null)
             await _dbContext.Groups.AddAsync(group);
         else
-        {          
+        {   
+            UpdateGroupFromData(fGroup, group);
             fGroup.Students = group.Students;
             _dbContext.Update(fGroup);
-            await _dbContext.SaveChangesAsync();
         }
-                 
         await _dbContext.SaveChangesAsync();
     }
+    async Task PrepareGroup(Group group)
+    {
+        var fSpec = await _dbContext.Specialities.FindAsync(group.Speciality.Code);
 
-    public async Task<IEnumerable<string>> FindStudentsByQuery(string query)
+        if(fSpec is not null)
+            group.Speciality = fSpec;
+    }
+
+    void UpdateGroupFromData(Group toUpdate, Group data)
+    {
+        if(data.Students.Count > 0)
+        {
+            _dbContext.Students.RemoveRange(toUpdate.Students);
+            toUpdate.Students = data.Students;
+        }
+
+        if(data.CourseNum is not null)
+            toUpdate.CourseNum = data.CourseNum;
+        
+        if(data.PracticeType is not null)
+            toUpdate.PracticeType = data.PracticeType;
+
+        if(data.Facultative is not null)
+            toUpdate.Facultative = data.Facultative;
+
+        if(data.PracticeEnd is not null)
+            toUpdate.PracticeEnd = data.PracticeEnd;
+        
+        if(data.PracticeStart is not null)
+            toUpdate.PracticeEnd = data.PracticeStart;
+        
+        if(data.PracticeType is not null)
+            toUpdate.PracticeType = data.PracticeType;
+    }
+    public Task<IEnumerable<string>> FindStudentsByQuery(string query)
     {
         var toLowQ = query.ToLower();
         var students = _dbContext.Students.Include(s => s.Group)
             .Where(f => 
-                f.Fio.ToLower().Contains(toLowQ) || 
-                toLowQ.Contains(f.Fio.ToLower()) ||
                 f.Fio == query ||
                 f.Fio.Contains(query)
             ).Take(10).Select(s => $"{s.Fio}({s.Group.Name})");
-        return students;
+        return Task.FromResult((IEnumerable<string>)students);
     }
     
 }

@@ -29,9 +29,8 @@ public class UnitTest1
     [Fact]
     public async Task Test1()
     {
-        
-        var w = new StudentTreateService(opt);
-        
-        using var stream = await w.InsertDataToTreate(student);
+        var p = new PracticeDataExcelParser();
+        using var file = System.IO.File.OpenRead(@"/Users/macbook/Documents/dotnet/TAS/tests/список практик СПО 2022-23.xls");
+        var res = p.ParseExcel(file);
     }
 }

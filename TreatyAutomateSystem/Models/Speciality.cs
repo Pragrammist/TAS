@@ -10,7 +10,6 @@ public class Speciality
         Code = code;
         Name = name;
     }
-    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 

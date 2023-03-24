@@ -17,10 +17,12 @@ public class HomeController : Controller
     };
     readonly GroupesExcelParser _parser;
     readonly DbService  _dbService;
-    public HomeController(GroupesExcelParser parser, DbService dbService)
+    readonly PracticeDataExcelParser _practiceParser;
+    public HomeController(GroupesExcelParser parser, DbService dbService, PracticeDataExcelParser practiceParser)
     {
         _parser = parser;
         _dbService = dbService;
+        _practiceParser = practiceParser;
     }
 
     public IActionResult Index()
@@ -28,13 +30,31 @@ public class HomeController : Controller
         return View();
     }
 
-    [HttpPost("/files/upload")]
-    public async Task<IActionResult> UploadFile(IFormFile file)
+    [HttpPost("/files/uploadgroup")]
+    public async Task<IActionResult> UploadGroupAndStudentsFile(IFormFile file)
     {
         using var excelStream = file.OpenReadStream();
         var group = _parser.ParseExcel(excelStream);
         await _dbService.AddOrUpdateGroup(group);   
         return new ObjectResult(students);
+    }
+
+
+    [HttpPost("/files/uploadrikvizit")]
+    public async Task<IActionResult> UploadRikvizitFile(IFormFile file)
+    {
+        using var excelStream = file.OpenReadStream();
+          
+        return new ObjectResult("");
+    }
+
+    [HttpPost("/files/uploadpractic")]
+    public async Task<IActionResult> UploadPracticDataFile(IFormFile file)
+    {
+        using var excelStream = file.OpenReadStream();
+        var groups = _practiceParser.ParseExcel(excelStream);
+        await _dbService.UploadManyGroups(groups);
+        return Ok();
     }
 
     [HttpGet("/students/{query}")]
@@ -43,7 +63,7 @@ public class HomeController : Controller
         var students = (await _dbService.FindStudentsByQuery(query)).ToArray();
         if (students.Count() == 0)
             return BadRequest();
-        return new ObjectResult(students);
+        return Ok();
     }
     
     [HttpGet("/files/generate/{nameAndGroup}")]
