@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
+
 namespace TreatyAutomateSystem.Models;
 
 public class Student 
@@ -10,7 +13,9 @@ public class Student
         
         StdCond = stdCond;
     }
-    public int Id { get; set; }
+    
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string Id { get; set; } = null!;
 
     public string Fio { get; set; } = null!;
 

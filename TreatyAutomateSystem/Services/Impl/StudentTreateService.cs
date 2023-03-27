@@ -18,7 +18,7 @@ public class StudentTreateService
 
         public string PracticeType { get; set; } = null!;
 
-        public int CourseNum { get; set; }
+        public string CourseNum { get; set; } = null!;
 
         public string Group { get; set; } = null!;
 
@@ -74,7 +74,7 @@ public class StudentTreateService
 
         var savedDoc = SaveDoc(doc, student);
 
-        return new MemoryStream(); //await GetStreamAndDeleteFile(savedDoc);
+        return await GetStreamAndDeleteFile(savedDoc);
     }
     void InsertData(WordprocessingDocument doc, StudentData student)
     {

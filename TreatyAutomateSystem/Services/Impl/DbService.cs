@@ -17,6 +17,7 @@ public class DbService
             await AddOrUpdateGroup(group);
         }
     }
+    public IEnumerable<string> GetCompanies() => _dbContext.Companies.Select(s => s.Name);
     public async Task UploadCompanies(IEnumerable<Company> companies)
     {
         foreach(var company in companies)
@@ -80,15 +81,21 @@ public class DbService
         if(data.PracticeType is not null)
             toUpdate.PracticeType = data.PracticeType;
     }
-    public Task<IEnumerable<string>> FindStudentsByQuery(string query)
-    {
+    public Task<IEnumerable<FindStudentResult>> FindStudentsByQuery(string query)
+{
         var toLowQ = query.ToLower();
         var students = _dbContext.Students.Include(s => s.Group)
             .Where(f => 
                 f.Fio == query ||
                 f.Fio.Contains(query)
-            ).Take(10).Select(s => $"{s.Fio}({s.Group.Name})");
-        return Task.FromResult((IEnumerable<string>)students);
-    }
+            ).Select(s => new FindStudentResult { Name = s.Fio, Group = s.Group.Name, Id = s.Id }).Take(10);
+        return Task.FromResult((IEnumerable<FindStudentResult>)students);
+    }   
     
+    public async Task<Student> FindStudentById(string id) =>
+        await _dbContext.Students.Include(s => s.Group).ThenInclude(g => g.Speciality).FirstAsync(f => f.Id == id);
+    
+    public async Task<Company> FindCompanyByName(string name) =>
+        await _dbContext.Companies.FindAsync(name) 
+            ?? throw new NullReferenceException($"Company with name {name} doesn't exists");
 }

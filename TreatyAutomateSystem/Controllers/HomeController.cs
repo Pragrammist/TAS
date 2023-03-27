@@ -19,15 +19,18 @@ public class HomeController : Controller
     readonly DbService  _dbService;
     readonly PracticeDataExcelParser _practiceParser;
     readonly OrganizationDataParser _orgParser;
+    readonly TreateManager _treateManager;
     public HomeController(GroupesExcelParser parser,
     DbService dbService, 
     PracticeDataExcelParser practiceParser,
-    OrganizationDataParser orgParser)
+    OrganizationDataParser orgParser,
+    TreateManager treateManager)
     {
         _parser = parser;
         _dbService = dbService;
         _practiceParser = practiceParser;
         _orgParser = orgParser;
+        _treateManager = treateManager;
     }
 
     public IActionResult Index()
@@ -62,6 +65,15 @@ public class HomeController : Controller
         await _dbService.UploadManyGroups(groups);
         return Ok();
     }
+    
+    [HttpGet("/companies")]
+    public IActionResult GetCompanies(string query)
+    {
+        var comps = _dbService.GetCompanies().ToArray();
+        if (students.Length == 0)
+            return BadRequest();
+        return new ObjectResult(comps);
+    }
 
     [HttpGet("/students/{query}")]
     public async Task<IActionResult> FindStudentsAsync(string query)
@@ -69,20 +81,15 @@ public class HomeController : Controller
         var students = (await _dbService.FindStudentsByQuery(query)).ToArray();
         if (students.Count() == 0)
             return BadRequest();
-        return Ok();
+        return new ObjectResult(students);
     }
     
-    [HttpGet("/files/generate/{nameAndGroup}")]
-    public IActionResult GenerateDocx(string nameAndGroup)
+    [HttpGet("/files/generate")]
+    public async Task<IActionResult> GenerateDocx(string studentId, string companyName, TreateType treateType)
     {
-        var student = students.FirstOrDefault(s => s.ToLower() == nameAndGroup.ToLower());
-        string base64File;
-        if (student is null)
-            base64File = Convert.ToBase64String(System.IO.File.ReadAllBytes($"wwwroot/notfound.pdf"));
-        else
-            base64File = Convert.ToBase64String(System.IO.File.ReadAllBytes($"wwwroot/{student}.pdf"));
-        var resString = "data:application/pdf;base64," + base64File;
-        return Content(resString, "application/pdf");
+        var doc = await _treateManager.GenerateOneProfileTreateTypeDocument(studentId, companyName);
+
+        return File(doc, "officedocument.wordprocessingml.document");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -90,18 +97,7 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-    public static string ConvertToBase64(Stream stream)
-    {
-        byte[] bytes;
-        using (var memoryStream = new MemoryStream())
-        {
-            stream.CopyTo(memoryStream);
-            bytes = memoryStream.ToArray();
-        }
-
-        string base64 = Convert.ToBase64String(bytes);
-        return base64;
-    }
+    
 
 }
 

@@ -17,7 +17,7 @@ public class UnitTest1
 
     StudentTreateService.StudentData student = new StudentTreateService.StudentData
     {
-        CourseNum = 3,
+        CourseNum = "3",
 
         Group = "547пи-3",
 

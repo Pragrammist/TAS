@@ -13,7 +13,8 @@ builder.Services.AddTransient<StudentTreateService.Options>(s =>
     });
 builder.Services.AddTransient<StudentTreateService>();
 builder.Services.AddTransient<GroupesExcelParser>();
-builder.Services.AddTransient<DbService>();
+builder.Services.AddScoped<DbService>();
+builder.Services.AddScoped<TreateManager>();
 builder.Services.AddTransient<PracticeDataExcelParser>();
 builder.Services.AddTransient<OrganizationDataParser>();
 builder.Services.AddDbContext<TasDbContext>(c => c.UseSqlite("Data source=TAS.db"));

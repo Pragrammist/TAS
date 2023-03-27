@@ -7,7 +7,10 @@
 
 
 
-<object id="document-to-view" type="application/pdf" width="1024" height="800"></object>
+<div class="header-el">
+    <select id="companySelectorId">
+    </select>
+</div>
 
 
 
@@ -47,7 +50,9 @@
 
 <script>
     $(function(){
-        let searchResIsShown = false;
+        UploadFile("#uploadGroupAndStudentsButton", "#uploadGroupAndStudentsFile", "/files/uploadgroup");
+        UploadFile("#uploaduploadRekvizitButton", "#uploadRekvizitFile", "/files/uploadrikvizit");
+        UploadFile("#uploadPracticeDataButton", "#uploadPracticeDataFile", "/files/uploadpractic");
         function ShowMessage(text)
         {
             let el = $("<li></li>").text(text);
@@ -84,9 +89,7 @@
             });
         }
         
-        UploadFile("#uploadGroupAndStudentsButton", "#uploadGroupAndStudentsFile", "/files/uploadgroup");
-        UploadFile("#uploaduploadRekvizitButton", "#uploadRekvizitFile", "/files/uploadrikvizit");
-        UploadFile("#uploadPracticeDataButton", "#uploadPracticeDataFile", "/files/uploadpractic");
+        
         
         function ChangeSearchResultAnimationAppear(data) {
             if (searchResIsShown) 
@@ -94,7 +97,7 @@
                 $("#search-result").animate({ left: '500px', opacity: 0 }, 500, "", function() {
                     $("#search-result").text("");
                     for(let i = 0; i < data.length; i++){
-                        let contentEl = $("<li></li>").text(data[i]).addClass("name-s-result");
+                        let contentEl = $("<li></li>").text(`${i+1}.${data[i].name}(${data[i].group})`).addClass("name-s-result");
                         $("#search-result").append(contentEl);
                     }
                 });
@@ -104,17 +107,18 @@
         function ChangeSearchResultAnimationDisappear() {
             $("#search-result").animate({left: '0'});
         }
+        let searchedStudents;
         function SearchNames(){
             let val = $("#search-query").val();
             if(val){
                 let query = "/students/" + val;
                 $.get(query,
                 function(data){
-                    
+                    searchedStudents = data;
                     if (!searchResIsShown) {
                         $("#search-result").text("");
                         for(let i = 0; i < data.length; i++){
-                            let contentEl = $("<li></li>").text(data[i]).addClass("name-s-result");
+                            let contentEl = $("<li></li>").text( `${i+1}.${data[i].name}(${data[i].group})`).addClass("name-s-result");
                             $("#search-result").append(contentEl);
                         }
                         $("#search-result").slideDown("slow");
@@ -137,10 +141,14 @@
             searchResIsShown = false;
         });
         $("#search-result").on("click", ".name-s-result",function(){
-            let nameToSearch = this.innerText;
-            let query = "/files/generate/" +nameToSearch;
+            let innerTextOfSearchResElement = this.innerText;
+            let textsOfSearchResEl = innerTextOfSearchResElement.split('.');
+            let indexOfSearchedStudentsEl = textsOfSearchResEl[0]-1;
+            var student = searchedStudents[indexOfSearchedStudentsEl];
+            let query = `/files/generate?studentId=${student.Id}&companyName=${}&treateType=${}`;
             $.get(query , function(data){
-                $("#document-to-view").prop("data", data);
+                const url = window.URL.createObjectURL(data);
+                window.location.href = url;
             });
         });
         

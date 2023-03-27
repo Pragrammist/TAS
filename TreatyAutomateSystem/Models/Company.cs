@@ -7,4 +7,8 @@ public class Company
     public string DirectorName { get; set; } = null!;
 
     public string Recvizit { get; set; } = null!;
+
+    public string NaOsnovanii { get; set; } = "Устава";
+
+    public string TheEndLetters { get; set; } = "ое";
 }

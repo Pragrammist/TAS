@@ -18,7 +18,7 @@ public class TasDbContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Student>().HasKey(k => k.Fio);
+        modelBuilder.Entity<Student>().HasKey(k => k.Id);
         modelBuilder.Entity<Group>().HasKey(g => g.Name);
         modelBuilder.Entity<Speciality>().HasKey(s => s.Code);
         modelBuilder.Entity<Company>().HasKey(s => s.Name);
