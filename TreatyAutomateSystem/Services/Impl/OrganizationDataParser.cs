@@ -15,7 +15,8 @@ public class OrganizationDataParser
     const int ROW_CELL_VALID_FIELDS = 0;
     const int START_ORG_NAME_CELL = 1;
     const int START_PRACTICE_DIRECTOR_CELL = 2;
-    const int START_RECVIZIT_CELL = 3;
+    const int START_NA_OSNOVANII_CELL = 3;
+    const int START_RECVIZIT_CELL = 4;
     
     
 
@@ -38,12 +39,16 @@ public class OrganizationDataParser
 
         var ricvs = Recvizits(compTable);
 
+        var naOsnovanii = NaOsnovanii(compTable);
         return orgNames.Select((name, i) => new Company{
             Name = orgNames[i],
             Recvizit = ricvs[i],
-            DirectorName = dirNames[i]
+            DirectorName = dirNames[i],
+            NaOsnovanii = naOsnovanii[i]
         });
     }
+
+    string[] NaOsnovanii(DataTable compTable) => ReadColumnAsEnumarable(compTable, START_NA_OSNOVANII_CELL);
 
     string[] OrgNames(DataTable compTable) => ReadColumnAsEnumarable(compTable, START_ORG_NAME_CELL);
 

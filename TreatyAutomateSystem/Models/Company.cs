@@ -8,7 +8,6 @@ public class Company
 
     public string Recvizit { get; set; } = null!;
 
-    public string NaOsnovanii { get; set; } = "Устава";
+    public string NaOsnovanii { get; set; } = null!;
 
-    public string TheEndLetters { get; set; } = "ое";
 }

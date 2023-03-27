@@ -67,11 +67,10 @@ public class HomeController : Controller
     }
     
     [HttpGet("/companies")]
-    public IActionResult GetCompanies(string query)
+    public IActionResult GetCompanies()
     {
         var comps = _dbService.GetCompanies().ToArray();
-        if (students.Length == 0)
-            return BadRequest();
+
         return new ObjectResult(comps);
     }
 
@@ -85,11 +84,19 @@ public class HomeController : Controller
     }
     
     [HttpGet("/files/generate")]
-    public async Task<IActionResult> GenerateDocx(string studentId, string companyName, TreateType treateType)
+    public async Task<string> GenerateDocx(string studentId, string companyName, TreateType treateType)
     {
         var doc = await _treateManager.GenerateOneProfileTreateTypeDocument(studentId, companyName);
 
-        return File(doc, "officedocument.wordprocessingml.document");
+        
+        
+        return await WordAsBase64(doc);
+    }
+    public async Task<string> WordAsBase64(Stream stream)
+    {
+        MemoryStream mem = new MemoryStream();
+        await stream.CopyToAsync(mem);
+        return "data:application/vnd.openxmlformats;base64," + Convert.ToBase64String(mem.ToArray());
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -14,7 +14,7 @@ public class Group
         CourseNum = courseNum;
         PracticeEnd = prEnd;
         PracticeStart = prStart;
-        PracticeType = PracticeType;
+        PracticeType = practiceType;
     }
     public int Id { get; set; }
     

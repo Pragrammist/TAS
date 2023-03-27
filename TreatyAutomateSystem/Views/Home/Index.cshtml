@@ -7,45 +7,47 @@
 
 
 
-<div class="header-el">
-    <select id="companySelectorId">
-    </select>
-</div>
+
 
 
 
 @section Header{
     <div class="header-el">
-        <div>
-            <input type="file" name="" id="uploadGroupAndStudentsFile" accept=".xls" placeholder="Ученики и группа">
-        </div>
-        <div>
-            <button id="uploadGroupAndStudentsButton">Ученики и группа</button>
-        </div>
-    </div>
-    <div>
-        <div>
-            <input type="file" name="" id="uploadRekvizitFile" accept=".xls" placeholder="Реквизиты">
-        </div>
-        <div>
-            <button id="uploaduploadRekvizitButton">Реквизиты</button>
-        </div>
-    </div>
-    <div>
-        <div>
-            <input type="file" name="" id="uploadPracticeDataFile" accept=".xls" placeholder="Данные по практике">
-        </div>
-        <div>
-            <button id="uploadPracticeDataButton">Данные по практике</button>
-        </div>
-    </div>
-    <div class="header-el">
         <input type="search" name="" id="search-query" placeholder="ФИО студента(договор)">
     </div>
     <div class="header-el">
         <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Админка</a>
+    </div>
+    <div class="header-el">
+        <select id="treatSelectorId">
+            <option value="0">Онополосный</option>
+            <option value="1">Многополосный</option>
+        </select>
     </div>  
+    <div class="header-el">
+        <select id="companySelectorId">
+        </select>
+    </div>
 }
+
+<div class="header-el">
+    <div>
+        <input type="file" name="" id="uploadGroupAndStudentsFile" accept=".xls" placeholder="Ученики и группа">
+        <button id="uploadGroupAndStudentsButton">Ученики и группа</button>
+    </div>
+</div>
+<div>
+    <div>
+        <input type="file" name="" id="uploadRekvizitFile" accept=".xls" placeholder="Реквизиты">
+        <button id="uploaduploadRekvizitButton">Реквизиты</button>
+    </div>
+</div>
+<div>
+    <div>
+        <input type="file" name="" id="uploadPracticeDataFile" accept=".xls" placeholder="Данные по практике">
+        <button id="uploadPracticeDataButton">Данные по практике</button>
+    </div>
+</div>
 
 
 <script>
@@ -53,6 +55,17 @@
         UploadFile("#uploadGroupAndStudentsButton", "#uploadGroupAndStudentsFile", "/files/uploadgroup");
         UploadFile("#uploaduploadRekvizitButton", "#uploadRekvizitFile", "/files/uploadrikvizit");
         UploadFile("#uploadPracticeDataButton", "#uploadPracticeDataFile", "/files/uploadpractic");
+        FillCompanySelectorId();
+        function FillCompanySelectorId()
+        {
+            $.get("/companies/", function(data){
+                for(let i = 0; i < data.length; i++)
+                {
+                    let options = $("#companySelectorId");
+                    options.append(new Option(data[i], data[i]));
+                }
+            });
+        }
         function ShowMessage(text)
         {
             let el = $("<li></li>").text(text);
@@ -90,7 +103,7 @@
         }
         
         
-        
+        let searchResIsShown = false;
         function ChangeSearchResultAnimationAppear(data) {
             if (searchResIsShown) 
             {
@@ -144,10 +157,12 @@
             let innerTextOfSearchResElement = this.innerText;
             let textsOfSearchResEl = innerTextOfSearchResElement.split('.');
             let indexOfSearchedStudentsEl = textsOfSearchResEl[0]-1;
-            var student = searchedStudents[indexOfSearchedStudentsEl];
-            let query = `/files/generate?studentId=${student.Id}&companyName=${}&treateType=${}`;
+            let student = searchedStudents[indexOfSearchedStudentsEl];
+            let comp = $( "#companySelectorId" ).val();
+            let treateType = $( "#treatSelectorId" ).val();
+            let query = `/files/generate?studentId=${student.id}&companyName=${comp}&treateType=${treateType}`;
             $.get(query , function(data){
-                const url = window.URL.createObjectURL(data);
+                const url = window.URL.createObjectURL(new Blob([data] , {type:'application/vnd.openxmlformats'}));
                 window.location.href = url;
             });
         });

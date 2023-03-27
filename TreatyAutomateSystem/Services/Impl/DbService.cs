@@ -1,3 +1,4 @@
+using System;
 using TreatyAutomateSystem.Models;
 using Microsoft.EntityFrameworkCore;
 namespace TreatyAutomateSystem.Services;
@@ -22,9 +23,21 @@ public class DbService
     {
         foreach(var company in companies)
         {
-            if(await _dbContext.Companies.FindAsync(company.Name) is null)
+            var fComp = await _dbContext.Companies.FindAsync(company.Name);
+            if(fComp is null)
                 await _dbContext.Companies.AddAsync(company);
+            else
+                UpdateCompanyData(fComp, company);
+            await _dbContext.SaveChangesAsync();
         }
+    }
+    void UpdateCompanyData(Company toUpdate, Company data)
+    {
+        toUpdate.Name = data.Name;
+        toUpdate.DirectorName = data.DirectorName;
+        toUpdate.NaOsnovanii = data.NaOsnovanii;
+        toUpdate.Recvizit = data.Recvizit;
+        
     }
     public async Task AddOrUpdateGroup(Group group)
     {
@@ -42,7 +55,6 @@ public class DbService
         else
         {   
             UpdateGroupFromData(fGroup, group);
-            fGroup.Students = group.Students;
             _dbContext.Update(fGroup);
         }
         await _dbContext.SaveChangesAsync();
@@ -76,7 +88,7 @@ public class DbService
             toUpdate.PracticeEnd = data.PracticeEnd;
         
         if(data.PracticeStart is not null)
-            toUpdate.PracticeEnd = data.PracticeStart;
+            toUpdate.PracticeStart = data.PracticeStart;
         
         if(data.PracticeType is not null)
             toUpdate.PracticeType = data.PracticeType;

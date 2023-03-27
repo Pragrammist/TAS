@@ -88,6 +88,7 @@ public class StudentTreateService
         using var fileStream = File.OpenRead(path);
         await fileStream.CopyToAsync(streamRes);
         File.Delete(path);
+        streamRes.Position = 0;
         return streamRes;
     }
 
