@@ -6,12 +6,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 var conf = builder.Configuration;
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<StudentTreateService.Options>(s => 
-    new StudentTreateService.Options {
+builder.Services.AddTransient<StudentOneprofileTreateService.Options>(s => 
+    new StudentOneprofileTreateService.Options {
         FolderPathToSave = "Docs",
-        TreatePlatePath = "Docs/treaty_template.docx"
+        TreatePlatePath = "Docs/Однопрофильный.docx"
     });
-builder.Services.AddTransient<StudentTreateService>();
+builder.Services.AddTransient<CompanyManyprofilesTreateService.Options>(s => 
+    new CompanyManyprofilesTreateService.Options {
+        FolderPathToSave = "Docs",
+        TreatePlatePath = "Docs/Многопрофильный.docx"
+    });
+
+builder.Services.AddTransient<CompanyManyprofilesTreateService>();
+builder.Services.AddTransient<StudentOneprofileTreateService>();
 builder.Services.AddTransient<GroupesExcelParser>();
 builder.Services.AddScoped<DbService>();
 builder.Services.AddScoped<TreateManager>();

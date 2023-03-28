@@ -8,14 +8,14 @@ namespace tests;
 
 public class UnitTest1
 {
-    StudentTreateService.Options opt = new StudentTreateService.Options
+    StudentOneprofileTreateService.Options opt = new StudentOneprofileTreateService.Options
     {
         FolderPathToSave =  @"/Users/macbook/Documents/dotnet/TAS/tests",
         TreatePlatePath = @"/Users/macbook/Documents/dotnet/TAS/tests/Образец индивидуального договора СПО.docx"
 
     };
 
-    StudentTreateService.StudentData student = new StudentTreateService.StudentData
+    StudentOneprofileTreateService.StudentData student = new StudentOneprofileTreateService.StudentData
     {
         CourseNum = "3",
 
@@ -52,7 +52,7 @@ public class UnitTest1
     [Fact]
     public  async Task Test1()
     {
-        var t = new StudentTreateService(opt);
+        var t = new StudentOneprofileTreateService(opt);
         using var geneartedTreat = await t.InsertDataToTreate(student);
 
         

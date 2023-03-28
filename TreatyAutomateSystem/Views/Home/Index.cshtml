@@ -19,10 +19,7 @@
         <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Админка</a>
     </div>
     <div class="header-el">
-        <select id="treatSelectorId">
-            <option value="0">Онополосный</option>
-            <option value="1">Многополосный</option>
-        </select>
+        <button id="manyprofilesTreatyId">Сгенерировать многопрофильный договор</button>
     </div>  
     <div class="header-el">
         <select id="companySelectorId">
@@ -153,14 +150,17 @@
             $("#search-result").slideUp("slow");
             searchResIsShown = false;
         });
+        $("#manyprofilesTreatyId").click(function(){
+            let comp = $( "#companySelectorId" ).val();
+            window.location.href = `/files/generatemanyprofile?&companyName=${comp}`;
+        });
         $("#search-result").on("click", ".name-s-result",function(){
             let innerTextOfSearchResElement = this.innerText;
             let textsOfSearchResEl = innerTextOfSearchResElement.split('.');
             let indexOfSearchedStudentsEl = textsOfSearchResEl[0]-1;
             let student = searchedStudents[indexOfSearchedStudentsEl];
             let comp = $( "#companySelectorId" ).val();
-            let treateType = $( "#treatSelectorId" ).val();
-            window.location.href = `/files/generate?studentId=${student.id}&companyName=${comp}&treateType=${treateType}`;
+            window.location.href = `/files/generate?studentId=${student.id}&companyName=${comp}`;
         });
         
         

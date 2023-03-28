@@ -84,13 +84,24 @@ public class HomeController : Controller
     }
     
     [HttpGet("/files/generate")]
-    public async Task<IActionResult> GenerateDocx(string studentId, string companyName, TreateType treateType)
+    public async Task<IActionResult> GenerateDocx(string studentId, string companyName)
     {
         var doc = await _treateManager.GenerateOneProfileTreateTypeDocument(studentId, companyName);
-
+        var student = await _dbService.FindStudentById(studentId);
         var file = File(doc, "application/vnd.openxmlformats");
         
-        file.FileDownloadName = $"{companyName}({treateType.ToString()}).docx";
+        file.FileDownloadName = $"{companyName} {student.Fio}({student.Group.Name}).docx";
+        
+        return file;
+    }
+
+    [HttpGet("/files/generatemanyprofile")]
+    public async Task<IActionResult> GenerateManyProfilesDocx(string companyName)
+    {
+        var doc = await _treateManager.GenerateManyTreateTypeDocument(companyName);
+        var file = File(doc, "application/vnd.openxmlformats");
+        
+        file.FileDownloadName = $"{companyName}.docx";
         
         return file;
     }

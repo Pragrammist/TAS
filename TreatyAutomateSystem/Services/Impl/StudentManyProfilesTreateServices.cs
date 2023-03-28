@@ -1,32 +1,17 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using System.Data;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
 
 
 namespace TreatyAutomateSystem.Services;
 
-public class StudentOneprofileTreateService
+public class CompanyManyprofilesTreateService
 {
     readonly Options _options;
-    public class StudentData
+    public class CompanyData
     {
-        public string Name { get; set; } = null!;
-
-        public string Speciality { get; set; } = null!;
-
-        public string PracticeType { get; set; } = null!;
-
-        public string CourseNum { get; set; } = null!;
-
-        public string Group { get; set; } = null!;
-
-        public DateTime Start { get; set; }
-
-        public DateTime End { get; set; }
-
-
+        
         public string NaOsnovanii { get; set; } = null!;
 
 
@@ -44,7 +29,7 @@ public class StudentOneprofileTreateService
 
         public string TreatePlatePath { get; set; } = null!;
     }
-    public StudentOneprofileTreateService(Options options)
+    public CompanyManyprofilesTreateService(Options options)
     {
         _options = options;
     }
@@ -66,7 +51,7 @@ public class StudentOneprofileTreateService
         new Regex(@"основании\s*_+").Match(whereInsert);
     
 
-    public async Task<Stream> InsertDataToTreate(StudentData student)
+    public async Task<Stream> InsertDataToTreate(CompanyData student)
     {
         using var doc = GetCopyOfDocument(_options.TreatePlatePath);
         
@@ -76,11 +61,10 @@ public class StudentOneprofileTreateService
 
         return await GetStreamAndDeleteFile(savedDoc);
     }
-    void InsertData(WordprocessingDocument doc, StudentData student)
+    void InsertData(WordprocessingDocument doc, CompanyData student)
     {
         InsertCompanyDataToParagraph(doc, student);
         InsertCompDataToTable(doc, student);
-        InsertStudentDataToTable(doc, student);
     }
     async Task<Stream> GetStreamAndDeleteFile(string path)
     {
@@ -100,23 +84,8 @@ public class StudentOneprofileTreateService
         return doc;
     }
 
-    void InsertStudentDataToTable(WordprocessingDocument doc, StudentData student)
-    {
-        var cells = CellsWhereInsertStudentData(doc);
-        var dataToInsert = PrepareStudentDataToInsert(student);
-        // мы горизонтально проходим по таблице и вставляем туда данные
-        // в правильном порядке
-        int i = 0;
-        foreach(var cell in cells)
-        {
-            var cellParagraph = cell.First(p => p is Paragraph);
-            var run = cellParagraph.First(r => r is Run);
-            var text = new Text(dataToInsert[i]);
-            run.AppendChild(text);
-            i++;
-        }
-    }
-    void InsertCompDataToTable(WordprocessingDocument doc, StudentData student)
+    
+    void InsertCompDataToTable(WordprocessingDocument doc, CompanyData student)
     {
         var cell = CellWhereInsertCompData(doc);
         var par = cell.First(p => p is Paragraph);
@@ -151,7 +120,7 @@ public class StudentOneprofileTreateService
     
 
 
-    void InsertCompanyDataToParagraph(WordprocessingDocument doc, StudentData student)
+    void InsertCompanyDataToParagraph(WordprocessingDocument doc, CompanyData student)
     {
         var body = GetBodyOfDocument(doc);
 
@@ -160,7 +129,7 @@ public class StudentOneprofileTreateService
 
         ReplaceUnderlineText(run, student);
     }
-    void ReplaceUnderlineText(Run run, StudentData studentData)
+    void ReplaceUnderlineText(Run run, CompanyData studentData)
     {
         var text = run.First(t => t is Text && IsMatchedForCompanyData(t.InnerText));
         text.Remove();
@@ -169,7 +138,7 @@ public class StudentOneprofileTreateService
     }
     
 
-    string GenerateCompDataText(string whereInsert, StudentData studentData)
+    string GenerateCompDataText(string whereInsert, CompanyData studentData)
     {
         var forCompNameMatched = MatchedForCompanyName(whereInsert);
         var forCompNameGeneratedText = InsertDataInsteadOfUnderDash(forCompNameMatched.Value, studentData.CompanyName);
@@ -195,26 +164,9 @@ public class StudentOneprofileTreateService
         return whereInsert.Replace(underDash, $" {data}");
     }
     Match UnderDashMatch(string whereInsert) => new Regex(@"\s*_+\s*").Match(whereInsert);
-    IEnumerable<OpenXmlElement> CellsWhereInsertStudentData(WordprocessingDocument doc)
-    {
-        var body = GetBodyOfDocument(doc);
-        var table =(Table)body.First(e => e is Table && HasUserDataSignatureInHeaderOfTable(e));
-        var row = table.First(r => r is TableRow && !HasUserDataSignatureInHeaderOfTable(r));
-        var cells = row.Where(s => s is TableCell && s.InnerText == string.Empty);
-        return cells;
-    }
+    
 
-    bool HasUserDataSignatureInHeaderOfTable(OpenXmlElement element) => 
-    HasAnyRegexSignature(
-            element.InnerText,
-                @"вид\s*практической\s*подготовки",
-                @"срок\s*практической\s*подготовки",
-                @"шифр\s*специальности\s*",
-                @"ф\s*и\s*о\s*обучающегося\s*",
-                @"курс",
-                @"группа",
-                @"окончание",
-                @"начало");
+    
     bool HasAnyRegexSignature(string data, params string[] regexs)
     {
         foreach(var regex in regexs)
@@ -227,35 +179,25 @@ public class StudentOneprofileTreateService
         => doc?.MainDocumentPart?.Document.Body ?? throw new NullReferenceException("body of treat is null");
 
 
-    string[] PrepareStudentDataToInsert(StudentData student) => 
-        new string[]
-            {
-                student.Speciality,
-                student.PracticeType,
-                CourseNumAndGroupRightFormat(student),
-                student.Name,
-                ConvertDate(student.Start),
-                ConvertDate(student.End),
-            };
-    string ConvertDate(DateTime date) => date.ToString("dd.mm.yyyy");
-    string CourseNumAndGroupRightFormat(StudentData student) => $"{student.CourseNum} {student.Group}";
+    
+    
 
 
-    string SaveDoc(WordprocessingDocument doc, StudentData studentToGenerateDocName)
+    string SaveDoc(WordprocessingDocument doc, CompanyData studentToGenerateDocName)
     {
         var pathToSave = PathToSave(studentToGenerateDocName);
         using var doc2 = doc.SaveAs(pathToSave);
         return pathToSave;
     }
-    string PathToSave(StudentData student) => 
+    string PathToSave(CompanyData student) => 
         Path.Combine(
             _options.FolderPathToSave, 
             GetFileName(student)
         );
-    string GetFileName(StudentData student)
+    string GetFileName(CompanyData student)
     {
         var extToSave = Path.GetExtension(_options.TreatePlatePath);
-        var fileName = $"{student.Name}({student.Group}){extToSave}";
+        var fileName = $"{student.CompanyName}{extToSave}";
         return fileName;
     }
 }
