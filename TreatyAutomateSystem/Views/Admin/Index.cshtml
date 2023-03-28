@@ -5,9 +5,6 @@
             if(keycode == '13'){
                 let groupToSearch = $("#search-group-index").val();
             
-                let matched = /^[0-9]+$/.test(groupToSearch);
-                if(!matched)
-                    return;
                 
                 let searchUrl = "/Admin/Students?group=" + groupToSearch
 

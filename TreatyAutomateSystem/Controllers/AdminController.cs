@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TreatyAutomateSystem.Models;
+using TreatyAutomateSystem.Services;
 
 [Route("{controller}")]
 public class AdminController : Controller
@@ -9,37 +10,50 @@ public class AdminController : Controller
         "553ис-3к",
         "546юс-3",
     };
-    public AdminController()
+    readonly DbService _dbService;
+    public AdminController(DbService dbService)
     {
-        
+        _dbService = dbService;
     }
     [Route("{pageType}")]
-    public IActionResult Index(AdminPageType pageType, string? group = null)
+    public async Task<IActionResult> Index(AdminPageType pageType, string? group = null)
     {
-        string? foundGroup = null;
+        Group? foundGroup = null;
 
         if(group is not null)
-            foundGroup = GetGroup(group);
+            foundGroup = await GetGroup(group);
         
         if(foundGroup is null && group is not null)
             return Content("группа не найдена");
 
         var model = new AdminPageRouteDataModel 
         {
-            Group = foundGroup,
+            Group = foundGroup?.Name,
             PageType = pageType
         };
 
         return View(model);
     }
-    string? GetGroup(string query) => groups.FirstOrDefault(g => g.Contains(query));
-    
-    [HttpGet("/groups/{query}")]
-    public IActionResult GetStudentsFromGroup(string query)
+    async Task<Group?> GetGroup(string group) => await _dbService.FindGroupOrDefault(group);
+
+    [HttpGet("/groups/{name}")]
+    public async Task<IActionResult> GetStudentsFromGroup(string name)
     {
-        var res = Students.Where(s => s.Group.Contains(query));
+        var group = await _dbService.FindGroupOrDefault(name) ?? throw new NullReferenceException("Группа не найдена");
+        foreach(var student in group.Students)
+        {
+            student.Group = new Group(
+                group.Speciality, 
+                group.Name, 
+                group.CourseNum, 
+                group.Facultative, 
+                group.PracticeStart, 
+                group.PracticeEnd, 
+                group.PracticeType
+            );
+        }
         return new ObjectResult( 
-            value: res
+            value: group
         );
     }
 

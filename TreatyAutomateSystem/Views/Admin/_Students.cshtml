@@ -7,23 +7,26 @@
         const group = urlParams.get('group');
         const url = "/groups/" + group;
         $.get(url, function(data){
+            let groupObj = data;
             let groupInSelect;
             let courseInSelect;
             let specInSelect;
             let condType;
             let name;
             let id;
-            for(let i = 0; i < data.length; i++)
+            const ruCollator = new Intl.Collator('ru-RU');
+            let students = data.students.sort((a, b) => ruCollator.compare(a, b));
+            for(let i = 0; i < students.length; i++)
             {
-                let student = data[i];
+                let student = students[i];
                 id = student.id;
-                groupInSelect = student.group;
-                courseInSelect = student.course;
-                specInSelect = student.speciality;
-                condType = student.conditionType;
-                name = student.name;
+                groupInSelect = groupObj.name;
+                courseInSelect = groupObj.courseNum;
+                specInSelect = groupObj.speciality.name;
+                condType = student.stdCond;
+                name = student.fio;
 
-                let trEl = $("<tr>").attr("id", "student-"+id);
+                let trEl = $("<tr>").attr("id", `student-${id}`);
 
                 let inputNameEl = $("<input>").attr("value", name);
                 let nameTdEl = $("<td>").attr("id", "student-name-"+id).append(inputNameEl);
@@ -54,8 +57,8 @@
                 
 
                 let selectCondEl = $("<select>")
-                    .append("<option>Беспл</option>")
-                    .append("<option>Пл</option>");
+                    .append("<option value='0'>Беспл</option>")
+                    .append("<option value='1'>Пл</option>");
                 selectCondEl.val(condType);
                 let tdCondEl = $("<td>").attr("id", "student-cond-"+id);
 
@@ -63,6 +66,8 @@
                 let buttonDelEl = $('<button type="button">Удалить</button>').attr("id", "b-del-"+id);
                 let tdEl = $("<td>").append(buttonDelEl);
                 trEl.append(tdEl);
+                $(".students-table-update-buttons").before(trEl);
+
             }
             
             
@@ -84,27 +89,12 @@
             <th>Специальность</th>
             <th>Платная/Бесплатная</th>
         </tr>
-        <tr>
-            
-        </tr>
-        <tr>
-            <td>
-                <div>
-                    <input type="text" value="" name="" id="">
-                </div>
-            </td>
-        </tr>
-        <tr>
+        
+        <tr class="students-table-update-buttons">
             <td>
                 <div>
                     <button type="submit">Сохранить</button>
                 </div>
-            </td>
-            <td>
-                <button>Следующая</button>
-            </td>
-            <td>
-                <button>Назад</button>
             </td>
         </tr>
     </table>
