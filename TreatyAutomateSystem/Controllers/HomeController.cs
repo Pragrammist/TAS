@@ -84,13 +84,15 @@ public class HomeController : Controller
     }
     
     [HttpGet("/files/generate")]
-    public async Task<string> GenerateDocx(string studentId, string companyName, TreateType treateType)
+    public async Task<IActionResult> GenerateDocx(string studentId, string companyName, TreateType treateType)
     {
         var doc = await _treateManager.GenerateOneProfileTreateTypeDocument(studentId, companyName);
 
+        var file = File(doc, "application/vnd.openxmlformats");
         
+        file.FileDownloadName = $"{companyName}({treateType.ToString()}).docx";
         
-        return await WordAsBase64(doc);
+        return file;
     }
     public async Task<string> WordAsBase64(Stream stream)
     {

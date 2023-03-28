@@ -160,11 +160,7 @@
             let student = searchedStudents[indexOfSearchedStudentsEl];
             let comp = $( "#companySelectorId" ).val();
             let treateType = $( "#treatSelectorId" ).val();
-            let query = `/files/generate?studentId=${student.id}&companyName=${comp}&treateType=${treateType}`;
-            $.get(query , function(data){
-                const url = window.URL.createObjectURL(new Blob([data] , {type:'application/vnd.openxmlformats'}));
-                window.location.href = url;
-            });
+            window.location.href = `/files/generate?studentId=${student.id}&companyName=${comp}&treateType=${treateType}`;
         });
         
         
