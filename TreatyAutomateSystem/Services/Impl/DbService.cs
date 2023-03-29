@@ -18,12 +18,15 @@ public class DbService
             await AddOrUpdateGroup(group);
         }
     }
-    public IEnumerable<string> GetCompanies() => _dbContext.Companies.Select(s => s.Name);
+    public IEnumerable<string> GetNameCompanies() => GetCompanies().Select(s => s.Name);
     public async Task<Group?> FindGroupOrDefault(string groupName) => 
         await _dbContext.Groups
                     .Include(g => g.Students)
                     .Include(g => g.Speciality)
                     .FirstOrDefaultAsync(g => g.Name == groupName);
+    public IEnumerable<Group> GetGroups() => _dbContext.Groups.Include(g => g.Speciality);
+
+    public IEnumerable<Company> GetCompanies() => _dbContext.Companies;
     public async Task UploadCompanies(IEnumerable<Company> companies)
     {
         foreach(var company in companies)

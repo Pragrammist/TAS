@@ -60,8 +60,8 @@
                     .append("<option value='0'>Беспл</option>")
                     .append("<option value='1'>Пл</option>");
                 selectCondEl.val(condType);
-                let tdCondEl = $("<td>").attr("id", "student-cond-"+id);
-
+                let tdCondEl = $("<td>").attr("id", "student-cond-"+id).append(selectCondEl);
+                trEl.append(tdCondEl);        
 
                 let buttonDelEl = $('<button type="button">Удалить</button>').attr("id", "b-del-"+id);
                 let tdEl = $("<td>").append(buttonDelEl);

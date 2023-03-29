@@ -1,27 +1,50 @@
+<script>
+    $(function(){
+        $.get("admin/data/companies", function(data){
+            let comps = data;
+            
+
+            for(let i = 0; i < comps.length; i++)
+            {
+                let comp = comps[i];
+                let name = comp.name;
+                let directoreName = comp.directorName;
+                let ricvizit = comp.recvizit;
+                let naOsnovanii = comp.naOsnovanii;
+
+                let trEl = $("<tr>").attr("id", `comp-${name}`);
+                
+                
+                let inputNameEl = $("<input>").attr("value", name);
+                let nameTdEl = $("<td>").append(inputNameEl);
+                trEl.append(nameTdEl);
+
+                let inputDirectorNameEl = $("<input>").attr("value", directoreName);
+                let directorNameTdEl = $("<td>").append(inputDirectorNameEl);
+                trEl.append(directorNameTdEl);
+
+
+                let ricvizitElement = $("<textarea>").text(ricvizit);
+                let ricvizitElementTdEl = $("<td>").append(ricvizitElement);
+                trEl.append(ricvizitElementTdEl);
+
+
+                let inputNaOsnovaniiEl = $("<input>").attr("value", name);
+                let nameNaOsnovaniiTdEl = $("<td>").append(inputNaOsnovaniiEl);
+                trEl.append(nameNaOsnovaniiTdEl);
+                $(".companies-savebutton").before(trEl);
+            }
+        })
+    });
+</script>
+
 <table>
     <tr class="students-table-headers">
         <th>Название компании</th>
         <th>Реквизиты</th>
         <th>Шаблон договора</th>
     </tr>
-    <tr>
-        <td>
-            <div>
-                <input type="text" value="Инностудио" name="" id="">
-            </div>
-        </td>
-        <td>
-            <div>
-                <input type="file" name="" id="">
-            </div>
-        </td>
-        <td>
-            <div>
-                <input type="file" name="" id="">
-            </div>
-        </td>
-    </tr>
-    <tr>
+    <tr class="companies-savebutton">
         <td>
              <div>
                 <button type="submit">Сохранить</button>

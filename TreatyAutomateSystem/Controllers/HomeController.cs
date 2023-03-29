@@ -69,7 +69,7 @@ public class HomeController : Controller
     [HttpGet("/companies")]
     public IActionResult GetCompanies()
     {
-        var comps = _dbService.GetCompanies().ToArray();
+        var comps = _dbService.GetNameCompanies();
 
         return new ObjectResult(comps);
     }

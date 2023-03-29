@@ -5,11 +5,6 @@ using TreatyAutomateSystem.Services;
 [Route("{controller}")]
 public class AdminController : Controller
 {
-    string[] groups = new string[]{
-        "547пи-3к",
-        "553ис-3к",
-        "546юс-3",
-    };
     readonly DbService _dbService;
     public AdminController(DbService dbService)
     {
@@ -56,32 +51,23 @@ public class AdminController : Controller
             value: group
         );
     }
-
-    StudentDto[] Students => new StudentDto[]
+    [HttpGet("/groups")]
+    public IActionResult GetGroupsFromGroup()
     {
-        new StudentDto{
-            ConditionType = "Пл",
-            Course = 3,
-            Fio = "Коваленко Виталий Михайлович",
-            Group = "547пи-3к",
-            Speciality = "09.02.05 Прикладная информатика",
-            Id = 1
-        },
-        new StudentDto{
-            ConditionType = "Пл",
-            Course = 3,
-            Fio = "Лифиренко Михаил Дмитриевич",
-            Group = "547пи-3к",
-            Speciality = "09.02.05 Прикладная информатика",
-            Id = 1
-        },
-        new StudentDto{
-            ConditionType = "Пл",
-            Course = 3,
-            Fio = "Алтунин Антон Витальевич",
-            Group = "547пи-3к",
-            Speciality = "09.02.05 Прикладная информатика",
-            Id = 1
-        },
-    };
+        var groups = _dbService.GetGroups();
+        
+        return new ObjectResult( 
+            value: groups
+        );
+    }
+    
+    [HttpGet("admin/data/companies")]
+    public IActionResult GetCompanies()
+    {
+        var companies = _dbService.GetCompanies();
+        
+        return new ObjectResult( 
+            value: companies
+        );
+    }
 }

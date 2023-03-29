@@ -1,3 +1,75 @@
+<script>
+    $(function(){
+        $.get("/groups", function(data){
+            let groups = data;
+            for(let i = 0; i < groups.length; i++)
+            {
+                let group = groups[i];
+                let name = group.name;
+                let spec = group.speciality.name;
+                let facult = group.facultative;
+                let practiceStart = group.practiceStart;
+                let practiceEnd = group.practiceEnd;
+                let practiceType = group.practiceType;
+                let courseNum = group.courseNum;
+                
+
+                let trEl = $("<tr>").attr("id", `group-${name}`);
+                
+                
+                let inputNameEl = $("<input>").attr("value", name);
+                let nameTdEl = $("<td>").append(inputNameEl);
+                trEl.append(nameTdEl);
+
+                let specOptionObj = $("<option selected/>").text(spec).val(spec);
+                let selectSpecEl = $("<select>").append(specOptionObj);
+                let tdSpecEl = $("<td>").append(selectSpecEl);
+                trEl.append(tdSpecEl);
+
+                let selectFacult = $("<select>")
+                    .append("<option value='0'>СПО</option>")
+                    .append("<option value='1'>ВО</option>");
+                selectFacult.val(facult);
+                let tdFacultEl = $("<td>").append(selectFacult);
+                trEl.append(tdFacultEl);
+
+                let practiceStartDateTimeEl = $("<time>")
+                                                .text(practiceStart)
+                                                .attr("datetime", practiceStart);
+                let tdPrStart = $("<td>").append(practiceStartDateTimeEl);  
+                trEl.append(tdPrStart);
+
+
+                let practiceEnndDateTimeEl = $("<time>")
+                                                .text(practiceEnd)
+                                                .attr("datetime", practiceEnd);
+                let tdPrEnd = $("<td>").append(practiceEnndDateTimeEl);  
+                trEl.append(tdPrEnd);
+
+                let practiceTypeEl = $("<select>")
+                                        .append("<option>производственная практика</option>")
+                                        .append("<option>учебная практика</option>")
+                                        .append("<option>преддипломная практика</option>");                
+                practiceTypeEl.val(practiceType);
+                let tdPracticeEl = $("<td>").append(practiceTypeEl);
+                trEl.append(tdPracticeEl);
+
+                let courseNumEl = $("<select>")
+                                        .append("<option>1</option>")
+                                        .append("<option>2</option>")
+                                        .append("<option>3</option>") 
+                                        .append("<option>4</option>")
+                                        .append("<option>5</option>");             
+                courseNumEl.val(courseNum);
+                let tdCourseEl = $("<td>").append(courseNumEl);
+                trEl.append(tdCourseEl);
+                $(".groupse-counters-update").before(trEl);
+            }
+        });
+        
+    });
+</script>
+
 <div>
     <table class="students-table">
         <tr>
@@ -12,91 +84,14 @@
         </tr>
         <tr class="students-table-headers">
             <th>ГРУППА</th>
-            <th>КУРС</th>
             <th>Специальность</th>
+            <th>Факультатив</th>
+            <th>Начало</th>
+            <th>Конец</th>
+            <th>Тип практики</th>
+            <th>КУРС</th>
         </tr>       
-        <tr id=0>
-            <td class="group">
-                <input type="text" value="547" name="" id="">
-            </td>
-
-            <td class="course">
-                <select>
-                    <option>1</option>
-                    <option>2</option>
-                    <option selected>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-            </td>
-            <td class="specialization">
-                <select>
-                    <option selected>09.02.05 Прикладная Информатика</option>
-                    <option>08.01.03 Юрисприденция</option>
-                    <option>07.02.03 Экономисты</option>
-                </select>
-            </td>
-            <td>
-                <div>
-                    <button type="button">Удалить</button>
-                </div>
-            </td>
-        </tr>
-        <tr id=-1>
-            <td class="group">
-                <input type="text" value="537" name="" id="">
-            </td>
-
-            <td class="course">
-                <select>
-                    <option>1</option>
-                    <option selected>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-            </td>
-            <td class="specialization">
-                <select>
-                    <option>09.02.05 Прикладная Информатика</option>
-                    <option selected>08.01.03 Юрисприденция</option>
-                    <option>07.02.03 Экономисты</option>
-                </select>
-            </td>
-            <td>
-                <div>
-                    <button type="button">Удалить</button>
-                </div>
-            </td>
-        </tr>
-        <tr id=-1>
-            <td class="group">
-                <input type="text" value="546" name="" id="">
-            </td>
-
-            <td class="course">
-                <select>
-                    <option selected>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-            </td>
-            <td class="specialization">
-                <select>
-                    <option>09.02.05 Прикладная Информатика</option>
-                    <option>08.01.03 Юрисприденция</option>
-                    <option selected>07.02.03 Экономисты</option>
-                </select>
-            </td>
-            <td>
-                <div>
-                    <button type="button">Удалить</button>
-                </div>
-            </td>
-        </tr>
-        <tr>
+        <tr class="groupse-counters-update">
             <td>
                 <div>
                     <button type="submit">Уменьшить у всех курс</button>
