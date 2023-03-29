@@ -25,7 +25,7 @@ public class DbService
                     .Include(g => g.Speciality)
                     .FirstOrDefaultAsync(g => g.Name == groupName);
     public IEnumerable<Group> GetGroups() => _dbContext.Groups.Include(g => g.Speciality);
-
+    public IEnumerable<Speciality> GetSpecialities() => _dbContext.Specialities;
     public IEnumerable<Company> GetCompanies() => _dbContext.Companies;
     public async Task UploadCompanies(IEnumerable<Company> companies)
     {

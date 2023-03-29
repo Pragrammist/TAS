@@ -1,48 +1,40 @@
+<script>
+    $(function(){
+        $.get("admin/data/specialities", function(data)
+        {
+            let specialities = data;
+
+            for(let i = 0; i < specialities.length; i++)
+            {
+                let speciality = specialities[i];
+                let code = speciality.code;
+                let name = speciality.name;
+                
+                let trEl = $("<tr>").attr("id", `spec-${name}`);
+
+                let inputNameEl = $("<input>").attr("value", name);
+                let nameTdEl = $("<td>").append(inputNameEl);
+                trEl.append(nameTdEl);
+
+                let inputCodeEl = $("<input>").attr("value", code);
+                let codeTdEl = $("<td>").append(inputCodeEl);
+                trEl.append(codeTdEl);
+
+                $(".specialities-save").before(trEl);
+            }
 
 
-<table>
-    <tr>
-        <td>
-            <div class="cell-help-message">
-                Поиск специальности
-            </div>
-            <div>
-                <input type="search" name="" id="" placeholder="специальность(поиск)">
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <th>Название специальности</th>
-        <th>Курс</th>
-    </tr>   
-    <tr>
-        <td>
-            <div>
-                <input type="text" placeholder="специльность(новая)" name="" id="">
-            </div>
-        </td>
-        <td>
-            <select>
-                <option selected>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
-        </td>
-        <td>
-            <button>Удалить</button>
-        </td>
-    </tr>
-    <tr>
+        });
+    });
+</script>
+
+<table class="specialities-table">
+    
+    <tr class="specialities-save">
         <td>
             <div>
                 <button type="submit">Сохранить</button>
             </div>
         </td>
-        <td>
-            <button>Следующая</button>
-            <button>Назад</button>
-        </td>    
     </tr>
 </table>

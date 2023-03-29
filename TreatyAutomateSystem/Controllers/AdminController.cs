@@ -70,4 +70,14 @@ public class AdminController : Controller
             value: companies
         );
     }
+
+    [HttpGet("admin/data/specialities")]
+    public IActionResult GetSpecialities()
+    {
+        var specialities = _dbService.GetSpecialities();
+        
+        return new ObjectResult( 
+            value: specialities
+        );
+    }
 }

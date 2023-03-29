@@ -23,16 +23,16 @@
                 let directorNameTdEl = $("<td>").append(inputDirectorNameEl);
                 trEl.append(directorNameTdEl);
 
+                let inputNaOsnovaniiEl = $("<input>").attr("value", naOsnovanii);
+                let nameNaOsnovaniiTdEl = $("<td>").append(inputNaOsnovaniiEl);
+                trEl.append(nameNaOsnovaniiTdEl);
+                $(".companies-savebutton").before(trEl);
 
                 let ricvizitElement = $("<textarea>").text(ricvizit);
                 let ricvizitElementTdEl = $("<td>").append(ricvizitElement);
                 trEl.append(ricvizitElementTdEl);
 
 
-                let inputNaOsnovaniiEl = $("<input>").attr("value", name);
-                let nameNaOsnovaniiTdEl = $("<td>").append(inputNaOsnovaniiEl);
-                trEl.append(nameNaOsnovaniiTdEl);
-                $(".companies-savebutton").before(trEl);
             }
         })
     });
@@ -41,8 +41,9 @@
 <table>
     <tr class="students-table-headers">
         <th>Название компании</th>
+        <th>Руководитель практики</th>
+        <th>На основани</th>
         <th>Реквизиты</th>
-        <th>Шаблон договора</th>
     </tr>
     <tr class="companies-savebutton">
         <td>
