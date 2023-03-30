@@ -1,7 +1,11 @@
+using System.ComponentModel;
+
 namespace TreatyAutomateSystem.Models;
 
 public enum StudyConditionType
 {
-    Ste = default, // бесплантное state-founded
-    Pd  = 1 // платное
+    [Description("бесплатное")]
+    Ste = default,
+    [Description("платное")]
+    Pd  = 1
 }

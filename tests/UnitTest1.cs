@@ -50,11 +50,10 @@ public class UnitTest1
     };
     
     [Fact]
-    public  async Task Test1()
+    public  void Test1()
     {
-        var t = new StudentOneprofileTreateService(opt);
-        using var geneartedTreat = await t.InsertDataToTreate(student);
-
+        var practiceDataExcelParser = new PracticeDataExcelParser();
+        var res = practiceDataExcelParser.ParseExcel(System.IO.File.OpenRead("/Users/macbook/Documents/dotnet/TAS/tests/список практик СПО 2022-23.xls"));
         
     }
 }

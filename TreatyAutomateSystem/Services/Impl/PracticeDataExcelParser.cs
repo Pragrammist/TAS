@@ -1,6 +1,7 @@
 using TreatyAutomateSystem.Models;
 using System.Data;
 using Excel;
+using TreatyAutomateSystem.Helpers;
 
 namespace TreatyAutomateSystem.Services;
 
@@ -32,7 +33,6 @@ public class PracticeDataExcelParser
     
     IEnumerable<Group> GetGroups(DataTable studentTable)
     {
-        var specCodes = SpecCodes(studentTable);
         var specNames = SpecNames(studentTable);
         var groups = Groups(studentTable);
         var prTypes = PracticeTypes(studentTable);
@@ -41,16 +41,18 @@ public class PracticeDataExcelParser
 
         var groupRes = groups.Select((groupName,i) => {
                     Speciality speciality = new Speciality(
-                        name: specNames[i],
-                        code: specCodes[i]
+                        code: specNames[i].ParseSpecialityCode(),
+                        name: specNames[i]
                     );
 
                     var group = new Group(
                         speciality: speciality,
+                        facultative: groupName.ParseFacultativeType(),
+                        courseNum: groupName.ParseCourseFromGroup(),
                         name: groupName,
-                        prStart: DateTime.FromOADate(double.Parse(prStarts[i])),
-                        prEnd: DateTime.FromOADate(double.Parse(prEnds[i])),
-                        practiceType: prTypes[i]
+                        prStart: prStarts[i].ParseFromOADateOrString(),
+                        prEnd: prEnds[i].ParseFromOADateOrString(),
+                        practiceType: prTypes[i].ParsePracticeType()
                     );
                     return group;
                 }
@@ -61,16 +63,13 @@ public class PracticeDataExcelParser
     
 
 
-    string[] SpecCodes(DataTable studentTable) => SpecNames(studentTable)
-        // берем первое слово в имени, т.к. это код
-        .Select(n => n.Split(' ', StringSplitOptions.RemoveEmptyEntries).First())
-        .ToArray();
+    
     string[] PracticeTypes(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_PRACTICE_TYPE_CELL);
     string[] PracticeStarts(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_PRACTICE_START_CELL);
     string[] PracticeEnds(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_PRACTICE_END_CELL);
     string[] SpecNames(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_SPEC_NAME_CELL);
 
-    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_GROUP_CELL);
+    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_GROUP_CELL).RemoveAllSpaces().ToArray();
 
     string[] ReadColumnAsEnumarable(DataTable studentTable, int columnIndex)
     {
@@ -87,6 +86,6 @@ public class PracticeDataExcelParser
             
             i++;
         }while(!string.IsNullOrEmpty(currentCell));
-        return listResult.ToArray();
+        return listResult.TrimEndings().NormolizeEmpties().ToLower().ToArray();
     }
 }

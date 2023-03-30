@@ -6,7 +6,7 @@ public class Group
     public Group(Speciality speciality, string name, 
         string? courseNum = null, FacultativeType? facultative = null,
         DateTime? prStart = null, DateTime? prEnd = null,
-        string? practiceType = null)
+        PracticeType? practiceType = null)
     {
         Speciality = speciality;
         Facultative = facultative;
@@ -24,7 +24,7 @@ public class Group
     public DateTime? PracticeEnd { get; set; }
 
 
-    public string? PracticeType { get; set; }
+    public PracticeType? PracticeType { get; set; }
 
 
     public string Name { get; set; } = null!;

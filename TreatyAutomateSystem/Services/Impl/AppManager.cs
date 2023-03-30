@@ -1,4 +1,5 @@
 using TreatyAutomateSystem.Models;
+using TreatyAutomateSystem.Helpers;
 namespace TreatyAutomateSystem.Services;
 
 public class TreateManager
@@ -47,7 +48,7 @@ public class TreateManager
         new StudentOneprofileTreateService.StudentData  {
             Name = student.Fio,
             Speciality = speciality.Name,
-            PracticeType = group.PracticeType ?? "",
+            PracticeType = group.PracticeType?.GetValueForTreatyFromDescription() ?? "",
             CourseNum = group.CourseNum ?? "",
             Group = group.Name,
             Start = group.PracticeStart ?? new DateTime(),
