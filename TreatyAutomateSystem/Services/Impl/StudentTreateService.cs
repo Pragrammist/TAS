@@ -3,14 +3,16 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Data;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
-using static TreatyAutomateSystem.Helpers.RegexHelpers;
 
-using static TreatyAutomateSystem.Helpers.RegexConst;
+
+using static TreatyAutomateSystem.Helpers.TreateConst;
+using TreatyAutomateSystem.Helpers;
 
 namespace TreatyAutomateSystem.Services;
 
 public class StudentOneprofileTreateService
 {
+    
     readonly Options _options;
     public class StudentData
     {
@@ -52,20 +54,11 @@ public class StudentOneprofileTreateService
     }
     
     bool IsMatchedForCompanyData(string text) => 
-            MatchedForCompanyName(text).Success && 
-            MatchedForPracticeDirector(text).Success && 
-            MatchedForNaOsnovanii(text).Success;
+            text.MatchedForCompanyName().Success && 
+            text.MatchedForPracticeDirector().Success && 
+            text.MatchedForNaOsnovanii().Success;
     
-    Match MatchedForCompanyName(string whereInsert) => 
-        new Regex(@"стороны,?\s*и\s*_*\s*").Match(whereInsert);
     
-
-    Match MatchedForPracticeDirector(string whereInsert) => 
-        new Regex(@"лице\s*_+\s*").Match(whereInsert);
-    
-
-    Match MatchedForNaOsnovanii(string whereInsert) => 
-        new Regex(@"основании\s*_+").Match(whereInsert);
     
 
     public async Task<Stream> InsertDataToTreate(StudentData student)
@@ -137,17 +130,8 @@ public class StudentOneprofileTreateService
    
 
     bool HasCompSignatureData(OpenXmlElement element) =>
-    HasAnyRegexSignature(
-            element.InnerText,
-                @"счет",
-                @"банк",
-                @"почта.*@donstu",
-                @"инн.кпп",
-                @"\d+/\d+",
-                @"счет\s*-\s*\d+",
-                @"счет\s*–\s*\d+",
-                @"телефон.*\d+директор",
-                @"\d+0{3,}\d+");
+    element.InnerText.HasAnyRegexSignature(
+                DgtuRecvizitRegex);
 
 
     
@@ -173,13 +157,13 @@ public class StudentOneprofileTreateService
 
     string GenerateCompDataText(string whereInsert, StudentData studentData)
     {
-        var forCompNameMatched = MatchedForCompanyName(whereInsert);
+        var forCompNameMatched = whereInsert.MatchedForCompanyName();
         var forCompNameGeneratedText = InsertDataInsteadOfUnderDash(forCompNameMatched.Value, studentData.CompanyName);
 
-        var forPrDirNameMatched = MatchedForPracticeDirector(whereInsert);
+        var forPrDirNameMatched = whereInsert.MatchedForPracticeDirector();
         var forPrDirNameGeneratedText = InsertDataInsteadOfUnderDash(forPrDirNameMatched.Value, studentData.PracticeDirector);
 
-        var forNaOsnovaniiMatched = MatchedForNaOsnovanii(whereInsert);
+        var forNaOsnovaniiMatched = whereInsert.MatchedForNaOsnovanii();
         var forNaOsnovaniiGeneratedText = InsertDataInsteadOfUnderDash(forNaOsnovaniiMatched.Value, studentData.NaOsnovanii);
 
         var res = whereInsert
@@ -196,7 +180,7 @@ public class StudentOneprofileTreateService
 
         return whereInsert.Replace(underDash, $" {data}");
     }
-    Match UnderDashMatch(string whereInsert) => new Regex(@"\s*_+\s*").Match(whereInsert);
+    Match UnderDashMatch(string whereInsert) => Regex.Match(whereInsert, UNDER_DASH_REGEG);
     IEnumerable<OpenXmlElement> CellsWhereInsertStudentData(WordprocessingDocument doc)
     {
         var body = GetBodyOfDocument(doc);
@@ -207,17 +191,8 @@ public class StudentOneprofileTreateService
     }
 
     bool HasUserDataSignatureInHeaderOfTable(OpenXmlElement element) => 
-    HasAnyRegexSignature(
-            element.InnerText,
-                @"вид\s*практической\s*подготовки",
-                @"срок\s*практической\s*подготовки",
-                SPEC_CODE_COLUMN_REGEX_1,
-                FIO_COLUMN_REGEX_1,
-                FIO_COLUMN_REGEX_2,
-                @"курс",
-                @"группа",
-                @"окончание",
-                @"начало");
+    element.InnerText.HasAnyRegexSignature(
+                StudentTreateTableRegex);
     
 
     Body GetBodyOfDocument(WordprocessingDocument doc)

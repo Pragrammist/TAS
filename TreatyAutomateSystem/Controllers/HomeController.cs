@@ -15,12 +15,12 @@ public class HomeController : Controller
         "Перчук Ира Павловна",
         "Карась Юля Игнатьевна"
     };
-    readonly GroupesExcelParser _parser;
+    readonly GroupsExcelParser _parser;
     readonly DbService  _dbService;
     readonly PracticeDataExcelParser _practiceParser;
     readonly OrganizationDataParser _orgParser;
     readonly TreateManager _treateManager;
-    public HomeController(GroupesExcelParser parser,
+    public HomeController(GroupsExcelParser parser,
     DbService dbService, 
     PracticeDataExcelParser practiceParser,
     OrganizationDataParser orgParser,

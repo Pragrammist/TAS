@@ -19,7 +19,7 @@ builder.Services.AddTransient<CompanyManyprofilesTreateService.Options>(s =>
 
 builder.Services.AddTransient<CompanyManyprofilesTreateService>();
 builder.Services.AddTransient<StudentOneprofileTreateService>();
-builder.Services.AddTransient<GroupesExcelParser>();
+builder.Services.AddTransient<GroupsExcelParser>();
 builder.Services.AddScoped<DbService>();
 builder.Services.AddScoped<TreateManager>();
 builder.Services.AddTransient<PracticeDataExcelParser>();

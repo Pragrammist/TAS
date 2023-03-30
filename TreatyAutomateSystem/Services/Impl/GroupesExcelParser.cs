@@ -1,14 +1,14 @@
 using TreatyAutomateSystem.Models;
-using System.Linq;
+using static TreatyAutomateSystem.Helpers.RegexConsts;
 using System.Data;
 using Excel;
 using TreatyAutomateSystem.Helpers;
 
 
 namespace TreatyAutomateSystem.Services;
-public class GroupesExcelParser 
+public class GroupsExcelParser 
 {
-    public GroupesExcelParser()
+    public GroupsExcelParser()
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
     }
@@ -37,6 +37,7 @@ public class GroupesExcelParser
         {
             var dataSet = reader.AsDataSet();
             var studentTable = dataSet.Tables[FIRST_SHEET_INDEX] ?? throw new ApplicationException("students file is empty");
+            
             var fios = Fios(studentTable);
             var stdConds = Conds(studentTable);
             var group = GetGroup(studentTable);
@@ -52,31 +53,7 @@ public class GroupesExcelParser
             return group;
         }
     }
-    StartReading GetStartReadingByRegex(DataTable studentTable, string regex, string rexexName) 
-        => GetStartReadingByRegexOrDefault(studentTable, regex, rexexName) 
-        ?? throw new AppExceptionBase($"Таблица не содержит ничего похожего на {rexexName}");
     
-
-    StartReading? GetStartReadingByRegexOrDefault(DataTable studentTable, string regex, string rexexName)
-    {
-        for(int i = 0; i < studentTable.Rows.Count; i++)
-        {
-            for(int j = 0; j < studentTable.Columns.Count; j++)
-            {
-                var content = studentTable.Rows[i][j].ToString();
-                if(content is null)
-                    continue;
-
-                if(System.Text.RegularExpressions.Regex.IsMatch(content, regex))
-                    return new StartReading
-                    {
-                        Row = i,
-                        Column = j
-                    };
-            }
-        }
-        return null;
-    }
     Group GetGroup(DataTable studentTable)
     {
         var fios = Fios(studentTable);
@@ -103,7 +80,7 @@ public class GroupesExcelParser
         return group;
     }
 
-    string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_FIO_CELL);
+    string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_FIO_CELL).AnyIsNotMatchedForRegex(FIO_PATERN_REGEX, "ФИО").ToArray();
     
     string[] Courses(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_COURSE_CELL);
 
@@ -132,9 +109,4 @@ public class GroupesExcelParser
         }while(!string.IsNullOrEmpty(currentCell));
         return listResult.ToLower().TrimEndings().NormolizeEmpties().ToArray();
     }
-}
-
-public class RikvizitxcelParser
-{
-    
 }
