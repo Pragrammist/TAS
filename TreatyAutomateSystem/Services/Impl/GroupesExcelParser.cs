@@ -2,6 +2,8 @@ using TreatyAutomateSystem.Models;
 using System.Linq;
 using System.Data;
 using Excel;
+using TreatyAutomateSystem.Helpers;
+
 
 namespace TreatyAutomateSystem.Services;
 public class GroupesExcelParser 
@@ -10,6 +12,8 @@ public class GroupesExcelParser
     {
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
     }
+
+    
     const int FIRST_SHEET_INDEX = 0;
     const int ROW_CELL_START = 9;
     const int START_FIO_CELL = 2;
@@ -20,14 +24,19 @@ public class GroupesExcelParser
     const int START_SPEC_NAME_CELL = 7;
     const int START_GROUP_CELL = 10;
     
+    class StartReading
+    {
+        public int Row { get; set; }
 
+        public int Column { get; set; }
+    }
 
     public Group ParseExcel(Stream stream)
     {
         using (var reader = ExcelReaderFactory.CreateBinaryReader(stream))
         {
             var dataSet = reader.AsDataSet();
-            var studentTable = dataSet.Tables[FIRST_SHEET_INDEX] ?? throw new InvalidOperationException("students file is empty");
+            var studentTable = dataSet.Tables[FIRST_SHEET_INDEX] ?? throw new ApplicationException("students file is empty");
             var fios = Fios(studentTable);
             var stdConds = Conds(studentTable);
             var group = GetGroup(studentTable);
@@ -43,7 +52,31 @@ public class GroupesExcelParser
             return group;
         }
     }
+    StartReading GetStartReadingByRegex(DataTable studentTable, string regex, string rexexName) 
+        => GetStartReadingByRegexOrDefault(studentTable, regex, rexexName) 
+        ?? throw new AppExceptionBase($"Таблица не содержит ничего похожего на {rexexName}");
     
+
+    StartReading? GetStartReadingByRegexOrDefault(DataTable studentTable, string regex, string rexexName)
+    {
+        for(int i = 0; i < studentTable.Rows.Count; i++)
+        {
+            for(int j = 0; j < studentTable.Columns.Count; j++)
+            {
+                var content = studentTable.Rows[i][j].ToString();
+                if(content is null)
+                    continue;
+
+                if(System.Text.RegularExpressions.Regex.IsMatch(content, regex))
+                    return new StartReading
+                    {
+                        Row = i,
+                        Column = j
+                    };
+            }
+        }
+        return null;
+    }
     Group GetGroup(DataTable studentTable)
     {
         var fios = Fios(studentTable);
@@ -52,7 +85,7 @@ public class GroupesExcelParser
         var faculs = Faculs(studentTable);
         var groups = Groups(studentTable);
         var courses = Courses(studentTable);
-        var group = fios.Select((fio,i) => {
+        var group = groups.Select((groupName,i) => {
                     Speciality speciality = new Speciality(
                         name: specNames[i],
                         code: specCodes[i]
@@ -60,9 +93,9 @@ public class GroupesExcelParser
 
                     var group = new Group(
                         speciality: speciality,
-                        courseNum: courses[i],
-                        facultative: faculs[i].ToLower() == "спо" ? FacultativeType.Sec : FacultativeType.Hgh,
-                        name: groups[i]
+                        courseNum: groupName.ParseCourseFromGroup(),
+                        facultative: groupName.ParseFacultativeType(),
+                        name: groupName
                     );
                     return group;
                 }
@@ -82,7 +115,7 @@ public class GroupesExcelParser
 
     string[] SpecNames(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_SPEC_NAME_CELL);
 
-    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_GROUP_CELL);
+    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_GROUP_CELL).RemoveAllSpaces().ToArray();
 
     string[] ReadColumnAsEnumarable(DataTable studentTable, int columnIndex)
     {
@@ -97,7 +130,7 @@ public class GroupesExcelParser
             
             i++;
         }while(!string.IsNullOrEmpty(currentCell));
-        return listResult.ToArray();
+        return listResult.ToLower().TrimEndings().NormolizeEmpties().ToArray();
     }
 }
 

@@ -75,6 +75,26 @@ public static class StringRegexHelpers
     }
 }
 
+public static class RegexConst
+{
+    public const string FIO_COLUMN_REGEX_1 = @"ф\s*и\s*о\s*обучающегося\s*";
+
+    public const string FIO_COLUMN_REGEX_2 = @"фамилия.*имя.*отчество";
+
+    public const string SPEC_CODE_COLUMN_REGEX_1 = @"шифр\s*специальности\s*";
+}
+
+public static class RegexHelpers
+{
+    public static bool HasAnyRegexSignature(string data, params string[] regexs)
+    {
+        foreach(var regex in regexs)
+            if(new Regex(regex, RegexOptions.IgnoreCase).Match(data).Success)
+                    return true;
+        return false;
+    }
+}
+
 public static class EnumHelpers
 {
     public static string GetValueForTreatyFromDescription<T>(this T enumerationValue)

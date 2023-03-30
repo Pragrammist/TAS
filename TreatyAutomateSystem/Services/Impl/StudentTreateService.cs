@@ -3,7 +3,9 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using System.Data;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
+using static TreatyAutomateSystem.Helpers.RegexHelpers;
 
+using static TreatyAutomateSystem.Helpers.RegexConst;
 
 namespace TreatyAutomateSystem.Services;
 
@@ -209,19 +211,14 @@ public class StudentOneprofileTreateService
             element.InnerText,
                 @"вид\s*практической\s*подготовки",
                 @"срок\s*практической\s*подготовки",
-                @"шифр\s*специальности\s*",
-                @"ф\s*и\s*о\s*обучающегося\s*",
+                SPEC_CODE_COLUMN_REGEX_1,
+                FIO_COLUMN_REGEX_1,
+                FIO_COLUMN_REGEX_2,
                 @"курс",
                 @"группа",
                 @"окончание",
                 @"начало");
-    bool HasAnyRegexSignature(string data, params string[] regexs)
-    {
-        foreach(var regex in regexs)
-            if(new Regex(regex, RegexOptions.IgnoreCase).Match(data).Success)
-                    return true;
-        return false;
-    }
+    
 
     Body GetBodyOfDocument(WordprocessingDocument doc)
         => doc?.MainDocumentPart?.Document.Body ?? throw new NullReferenceException("body of treat is null");
