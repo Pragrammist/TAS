@@ -56,6 +56,7 @@ public class UnitTest1
         // var res = practiceDataExcelParser.ParseExcel(System.IO.File.OpenRead("/Users/macbook/Documents/dotnet/TAS/tests/список практик СПО 2022-23.xls"));
         var groupseExcelPArser = new GroupsExcelParser();
 
-        var res = groupseExcelPArser.ParseExcel(System.IO.File.OpenRead("/Users/macbook/Documents/dotnet/TAS/tests/список практик СПО 2022-23.xls"));
+        var res = groupseExcelPArser.ParseExcel(System.IO.File.OpenRead("/Users/macbook/Documents/dotnet/TAS/tests/test.xls"));
+    
     }
 }

@@ -3,9 +3,73 @@ using static TreatyAutomateSystem.Helpers.RegexConsts;
 using System.Data;
 using Excel;
 using TreatyAutomateSystem.Helpers;
-
-
 namespace TreatyAutomateSystem.Services;
+
+
+public abstract class ExcelParserBase
+{
+    protected readonly ReadColumnAsEnumarableOptions _readOptions;
+    protected ExcelParserBase(ReadColumnAsEnumarableOptions readOptions)
+    {
+        _readOptions = readOptions;
+    }
+    protected class ReadColumnAsEnumarableOptions
+    {
+        public bool IsToLower { get; set; } = true;
+
+        public bool IsTrimEndings { get; set; } = true;
+
+        public bool IsNormolizeEmpties { get; set; } = true;
+    }
+
+    void CheckTableForIndexex(DataTable studentTable, int[] rowIndexes, int[]columnIndexes)
+    {
+        for(int i = 0; i < rowIndexes.Length; i++)
+            if(rowIndexes[i] >= studentTable.Rows.Count)
+                throw new AppExceptionBase($"Документ имеет не достаточное число строк. " +
+                $"Не найденная под номером: {rowIndexes[i] + 1}");
+        
+        for(int i = 0; i < columnIndexes.Length; i++)
+            if(columnIndexes[i] >= studentTable.Columns.Count)
+                throw new AppExceptionBase($"Документ имеет не достаточное число столбцов. " +
+                $"Не найденная под номером: {columnIndexes[i] + 1}");
+    }
+
+    string[] ReadColumnAsEnumarable(DataTable studentTable, int columnIndex, int rowCellStart)
+    {
+        List<string> listResult = new List<string>();
+        var i = rowCellStart;
+        string? currentCell = null;
+        do
+        {
+            currentCell = studentTable.Rows[i][columnIndex].ToString();
+            if(!string.IsNullOrEmpty(currentCell))
+                listResult.Add(currentCell);
+            
+            i++;
+        }while(!string.IsNullOrEmpty(currentCell));
+
+        IEnumerable<string> enRes = ProcessBySettings(listResult);
+
+        return enRes.ToArray();
+    }
+    void ValidSheets(DataSet dataSet, int sheetIndex)
+    {
+        if(dataSet.Tables.Count < sheetIndex)
+            throw new AppExceptionBase("нет первой страницы");
+    }
+    IEnumerable<string> ProcessBySettings(IEnumerable<string> enRes)
+    {
+        if(_readOptions.IsToLower)
+            enRes = enRes.ToLower();
+        if(_readOptions.IsTrimEndings)
+            enRes = enRes.TrimEndings();
+        if(_readOptions.IsNormolizeEmpties)
+            enRes = enRes.NormolizeEmpties();
+        return enRes;
+    }
+}
+
 public class GroupsExcelParser 
 {
     public GroupsExcelParser()
@@ -36,9 +100,9 @@ public class GroupsExcelParser
         using var reader = ExcelReaderFactory.CreateBinaryReader(stream);
         
         var dataSet = reader.AsDataSet();
+        ValidSheets(dataSet);
 
-        var studentTable = dataSet.Tables[FIRST_SHEET_INDEX] 
-            ?? throw new ApplicationException("students file is empty");
+        var studentTable = dataSet.Tables[FIRST_SHEET_INDEX];
 
         CheckTableForIndexex(studentTable);
         
@@ -48,6 +112,11 @@ public class GroupsExcelParser
 
         return group;
         
+    }
+    void ValidSheets(DataSet dataSet)
+    {
+        if(dataSet.Tables.Count < FIRST_SHEET_INDEX)
+            throw new AppExceptionBase("нет первой страницы");
     }
     void FillGroupByStudents(DataTable studentTable, Group group)
     {
@@ -98,7 +167,7 @@ public class GroupsExcelParser
         // var courses = Courses(studentTable);
         var group = groups.Select((groupName,i) => {
                     Speciality speciality = new Speciality(
-                        name: specNames[i],
+                        name: UnionSpecCodeAndSpecName(specNames[i], specCodes[i]),
                         code: specCodes[i]
                     );
 
@@ -113,7 +182,9 @@ public class GroupsExcelParser
             ).First();
         return group;
     }
-
+    string UnionSpecCodeAndSpecName(string spec, string code) => $"{code} {spec}";
+    
+    
     string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_FIO_CELL)
         .Select(s => s.Replace("ё", "е"))
         .AnyIsNotMatchedForRegex(FIO_PATERN_REGEX, "ФИО")

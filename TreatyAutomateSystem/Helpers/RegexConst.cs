@@ -21,4 +21,6 @@ public static class RegexConsts
     public const string SPEC_NAME_SYMBOLS_ONLY_REGEX = @"^(\D\w*\D\s?\D){1,}$";
 
     public const string STUDY_COND_REGEX = @"к$";
+
+    public const string SPEC_NAME_WITHD_CODE_REGEX = @"^\d{2}.\d{2}.\d{2}\s(\D\w*\D\s?\D){1,}$";
 }
