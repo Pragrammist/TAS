@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using static TreatyAutomateSystem.Helpers.RegexConsts;
 namespace TreatyAutomateSystem.Helpers;
 
 public static class EnumerableHelpers
@@ -13,7 +14,23 @@ public static class EnumerableHelpers
 
     public static IEnumerable<string> GiveSpecialityCode(this IEnumerable<string> en) => en.Select(s => s.ParseSpecialityCode());
 
-    public static IEnumerable<string> AnyIsNotMatchedForRegex(this IEnumerable<string> en, string regex, string regexName) => en.Select(s => Regex.IsMatch(s, regex, RegexOptions.IgnoreCase) ? s : throw new AppExceptionBase($"{s} не является {regexName}"));
+    public static IEnumerable<string> AnyIsNotMatchedForRegex(
+        this IEnumerable<string> en, 
+        string regex, 
+        string regexName
+    ) => 
+        en.Select(s => Regex.IsMatch(s, regex, RegexOptions.IgnoreCase) 
+        ? s 
+        : throw new AppExceptionBase($"{s} не является {regexName}"));
+
+    public static IEnumerable<string> AnyIsNotMatchedForGroup(
+        this IEnumerable<string> en) => en.Select(s => 
+        {
+            if(!Regex.IsMatch(s, GROUP_PATERN_HITH_REGEX) && !Regex.IsMatch(s, GROUP_PATERN_SECONDARY_REGEX))
+                throw new AppExceptionBase("Группа не соответствует патерну вышки или спо");
+            return s;   
+        });
+    
 }
 
 public class AppExceptionBase : Exception

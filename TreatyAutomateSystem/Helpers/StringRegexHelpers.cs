@@ -19,7 +19,7 @@ public static class StringRegexHelpers
     }
     public static string ParseSpecialityCode(this string speciality)
     {
-        var match = Regex.Match(speciality, @"^\d{2}.\d{2}.\d{2}");
+        var match = Regex.Match(speciality, SPEC_CODE_IN_START_PATERN_REGEX);
         
         if(!match.Success)
             throw new AppExceptionBase($"Строка специальности не содержит код в начале {speciality}");
@@ -46,12 +46,22 @@ public static class StringRegexHelpers
         throw new AppExceptionBase($"Группа не правильного формата {group}");
     }
 
+    public static StudyConditionType ParseStudyConditionType(this string stdCond)
+    {
+        if(stdCond == "ко")
+            return StudyConditionType.Pd;
+        else if(stdCond == "б")
+            return StudyConditionType.Ste;
+        
+        throw new AppExceptionBase($"Группа не правильного формата {stdCond}");
+    }
+
     public static string ParseCourseFromGroup(this string str)
     {
-        var mCourse = Regex.Match(str, @"\d{1}к?$", RegexOptions.IgnoreCase);
+        var mCourse = Regex.Match(str, COURSE_IN_GROUP_PATERN_REGEX, RegexOptions.IgnoreCase);
         if(!mCourse.Success)
             throw new AppExceptionBase($"группа не содержит в конце курс {str}");
-        return Regex.Match(mCourse.Value, @"\d").Value;
+        return Regex.Match(mCourse.Value, NUMBER_IN_COURSE_PATEREN_REGEX).Value;
     }
 
     public static bool HasAnyRegexSignature(this string data, params string[] regexs)
