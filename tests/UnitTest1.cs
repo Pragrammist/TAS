@@ -52,11 +52,11 @@ public class UnitTest1
     [Fact]
     public  void Test1()
     {
-        // var practiceDataExcelParser = new PracticeDataExcelParser();
-        // var res = practiceDataExcelParser.ParseExcel(System.IO.File.OpenRead("/Users/macbook/Documents/dotnet/TAS/tests/список практик СПО 2022-23.xls"));
-        var groupseExcelPArser = new GroupWithStudentsExcelReader();
+        var practiceDataExcelParser = new PracticeDataExcelReader();
+        var res = practiceDataExcelParser.ReadExcel(System.IO.File.OpenRead("/home/f/Documents/dotnet-app/TAS/tests/список практик СПО 2022-23.xls"));
+        // var groupseExcelPArser = new GroupWithStudentsExcelReader();
 
-        var res = groupseExcelPArser.ReadExcel(System.IO.File.OpenRead("/home/f/Documents/dotnet-app/TAS/tests/test.xls"));
+        // var res = groupseExcelPArser.ReadExcel(System.IO.File.OpenRead("/home/f/Documents/dotnet-app/TAS/tests/test.xls"));
     
     }
 }

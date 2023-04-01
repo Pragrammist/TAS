@@ -17,12 +17,12 @@ public class HomeController : Controller
     };
     readonly GroupWithStudentsExcelReader _parser;
     readonly DbService  _dbService;
-    readonly PracticeDataExcelParser _practiceParser;
+    readonly PracticeDataExcelReader _practiceParser;
     readonly OrganizationDataParser _orgParser;
     readonly TreateManager _treateManager;
     public HomeController(GroupWithStudentsExcelReader parser,
     DbService dbService, 
-    PracticeDataExcelParser practiceParser,
+    PracticeDataExcelReader practiceParser,
     OrganizationDataParser orgParser,
     TreateManager treateManager)
     {
@@ -61,7 +61,7 @@ public class HomeController : Controller
     public async Task<IActionResult> UploadPracticDataFile(IFormFile file)
     {
         using var excelStream = file.OpenReadStream();
-        var groups = _practiceParser.ParseExcel(excelStream);
+        var groups = _practiceParser.ReadExcel(excelStream);
         await _dbService.UploadManyGroups(groups);
         return Ok();
     }

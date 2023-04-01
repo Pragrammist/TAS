@@ -74,15 +74,15 @@ public class GroupWithStudentsExcelReader : TreatyExcelReaderBase
 
     
     
-    string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, FIO_CELL_COLUMN));
+    string[] Fios(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, FIO_CELL_COLUMN));
     
-    string[] Conds(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, ST_COND_COLUMN));
+    string[] Conds(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, ST_COND_COLUMN));
 
-    string[] SpecCodes(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, SPEC_CODE_COLUMN));
+    string[] SpecCodes(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, SPEC_CODE_COLUMN));
 
-    string[] SpecNames(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, SPEC_NAME_COLUMN));
+    string[] SpecNames(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, SPEC_NAME_COLUMN));
 
-    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, GROUP_COLUMN, IsRemoveAllSpaces: true));
+    string[] Groups(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, GROUP_COLUMN, IsRemoveAllSpaces: true));
 
     
 }

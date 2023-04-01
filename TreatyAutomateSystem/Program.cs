@@ -22,7 +22,7 @@ builder.Services.AddTransient<StudentOneprofileTreateService>();
 builder.Services.AddTransient<GroupWithStudentsExcelReader>();
 builder.Services.AddScoped<DbService>();
 builder.Services.AddScoped<TreateManager>();
-builder.Services.AddTransient<PracticeDataExcelParser>();
+builder.Services.AddTransient<PracticeDataExcelReader>();
 builder.Services.AddTransient<OrganizationDataParser>();
 builder.Services.AddDbContext<TasDbContext>(c => c.UseSqlite("Data source=TAS.db"));
 var app = builder.Build();

@@ -43,7 +43,7 @@ public abstract partial class TreatyExcelReaderBase
                 $"Не найденная под номером: {ColumnIndexes[i] + 1}");
     }
 
-    protected virtual string[] ReadColumnAsEnumarable(DataTable studentTable, ReadColumnAsEnumarableOptions options)
+    protected virtual string[] ReadColumnAsArray(DataTable studentTable, ReadColumnAsEnumarableOptions options)
     {
         List<string> listResult = new List<string>();
         var i = options.RowCellStart;
@@ -143,7 +143,7 @@ public abstract partial class TreatyExcelReaderBase
                             name: groupName,
                             prStart: data.PracticeStarts?[i].ParseFromOADateOrString(),
                             prEnd: data.PracticeEnds?[i].ParseFromOADateOrString(),
-                            practiceType: data.PracticeEnds?[i].ParsePracticeType()
+                            practiceType: data.PracticeTypes?[i].ParsePracticeType()
                         );
                         return group;
                     }
