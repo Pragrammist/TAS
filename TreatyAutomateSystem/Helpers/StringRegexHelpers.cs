@@ -53,7 +53,7 @@ public static class StringRegexHelpers
         else if(stdCond == "б")
             return StudyConditionType.Ste;
         
-        throw new AppExceptionBase($"Группа не правильного формата {stdCond}");
+        throw new AppExceptionBase($"Текст неправильного формата {stdCond}");
     }
 
     public static string ParseCourseFromGroup(this string str)
