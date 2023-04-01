@@ -5,223 +5,86 @@ using Excel;
 using TreatyAutomateSystem.Helpers;
 namespace TreatyAutomateSystem.Services;
 
-
-public abstract class ExcelParserBase
+public class GroupWithStudentsExcelReader : TreatyExcelReaderBase
 {
-    protected readonly ReadColumnAsEnumarableOptions _readOptions;
-    protected ExcelParserBase(ReadColumnAsEnumarableOptions readOptions)
-    {
-        _readOptions = readOptions;
-    }
-    protected class ReadColumnAsEnumarableOptions
-    {
-        public bool IsToLower { get; set; } = true;
-
-        public bool IsTrimEndings { get; set; } = true;
-
-        public bool IsNormolizeEmpties { get; set; } = true;
-    }
-
-    void CheckTableForIndexex(DataTable studentTable, int[] rowIndexes, int[]columnIndexes)
-    {
-        for(int i = 0; i < rowIndexes.Length; i++)
-            if(rowIndexes[i] >= studentTable.Rows.Count)
-                throw new AppExceptionBase($"Документ имеет не достаточное число строк. " +
-                $"Не найденная под номером: {rowIndexes[i] + 1}");
-        
-        for(int i = 0; i < columnIndexes.Length; i++)
-            if(columnIndexes[i] >= studentTable.Columns.Count)
-                throw new AppExceptionBase($"Документ имеет не достаточное число столбцов. " +
-                $"Не найденная под номером: {columnIndexes[i] + 1}");
-    }
-
-    string[] ReadColumnAsEnumarable(DataTable studentTable, int columnIndex, int rowCellStart)
-    {
-        List<string> listResult = new List<string>();
-        var i = rowCellStart;
-        string? currentCell = null;
-        do
-        {
-            currentCell = studentTable.Rows[i][columnIndex].ToString();
-            if(!string.IsNullOrEmpty(currentCell))
-                listResult.Add(currentCell);
-            
-            i++;
-        }while(!string.IsNullOrEmpty(currentCell));
-
-        IEnumerable<string> enRes = ProcessBySettings(listResult);
-
-        return enRes.ToArray();
-    }
-    void ValidSheets(DataSet dataSet, int sheetIndex)
-    {
-        if(dataSet.Tables.Count < sheetIndex)
-            throw new AppExceptionBase("нет первой страницы");
-    }
-    IEnumerable<string> ProcessBySettings(IEnumerable<string> enRes)
-    {
-        if(_readOptions.IsToLower)
-            enRes = enRes.ToLower();
-        if(_readOptions.IsTrimEndings)
-            enRes = enRes.TrimEndings();
-        if(_readOptions.IsNormolizeEmpties)
-            enRes = enRes.NormolizeEmpties();
-        return enRes;
-    }
-}
-
-public class GroupsExcelParser 
-{
-    public GroupsExcelParser()
-    {
-        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-    }
-
-    
     const int FIRST_SHEET_INDEX = 0;
     const int ROW_CELL_START = 9;
-    const int START_FIO_CELL = 2;
-    // const int START_COURSE_CELL = 3;
-    // const int START_FACUL_CELL = 4;
-    const int START_ST_COND_CELL = 5;
-    const int START_SPEC_CODE_CELL = 6;
-    const int START_SPEC_NAME_CELL = 7;
-    const int START_GROUP_CELL = 10;
-    
-    class StartReading
-    {
-        public int Row { get; set; }
+    const int FIO_CELL_COLUMN = 2;
+    const int ST_COND_COLUMN = 5;
+    const int SPEC_CODE_COLUMN = 6;
+    const int SPEC_NAME_COLUMN = 7;
+    const int GROUP_COLUMN = 10;
 
-        public int Column { get; set; }
+    protected override int FirstSheetIndex => FIRST_SHEET_INDEX;
+
+    protected override int[] RowIndexes => new int[]{
+        ROW_CELL_START
+    };
+
+    protected override int[] ColumnIndexes => new int[]{
+        FIO_CELL_COLUMN,
+        ST_COND_COLUMN,
+        SPEC_CODE_COLUMN,
+        SPEC_NAME_COLUMN,
+        GROUP_COLUMN
+    };
+
+
+    public Group ReadExcel(Stream stream) =>  GetGroupWithStudents (
+        GetDataTable(stream)
+    );
+    
+
+    Group GetGroup(DataTable studentTable) 
+    {
+        var passData = new GroupsParser.GroupArraysAsPassGroupsData(
+            Groups(studentTable),
+            GetSpecialities(studentTable)
+
+        );
+        var groups = GetGroupsParser.GetGroups(passData);
+
+        return groups.First();
+    }
+    Speciality[] GetSpecialities(DataTable studentTable)
+    {
+        var passData = new SpecialitiesParser.GroupArraysAsPassSpecialitiesData(
+            SpecNames(studentTable),
+            SpecCodes(studentTable)
+
+        );
+
+        return GetSpecialitiesParser.GetSpecialities(passData).ToArray();
     }
 
-    public Group ParseExcel(Stream stream)
-    {
-        using var reader = ExcelReaderFactory.CreateBinaryReader(stream);
-        
-        var dataSet = reader.AsDataSet();
-        ValidSheets(dataSet);
-
-        var studentTable = dataSet.Tables[FIRST_SHEET_INDEX];
-
-        CheckTableForIndexex(studentTable);
-        
-        //var stdConds = Conds(studentTable);
+    Group GetGroupWithStudents(DataTable studentTable)
+    {   
         var group = GetGroup(studentTable);
-        FillGroupByStudents(studentTable, group);
+
+        var data = new StudentParser.GroupArraysAsPassStudentsData(
+            Fios(studentTable),
+            Conds(studentTable),
+            group
+        );
+
+        GetStudentParser.FillGroupAndGetStudents(data);
 
         return group;
-        
     }
-    void ValidSheets(DataSet dataSet)
-    {
-        if(dataSet.Tables.Count < FIRST_SHEET_INDEX)
-            throw new AppExceptionBase("нет первой страницы");
-    }
-    void FillGroupByStudents(DataTable studentTable, Group group)
-    {
-        var fios = Fios(studentTable);
-        var stdConds = Conds(studentTable);
-        
-        var students =  fios.Select((fio,i) => {
-            var student = new Student(
-                fio: fio,
-                group: group,
-                stdCond: stdConds[i].ParseStudyConditionType()
-            );
-            return student;
-        });
-        group.Students = students.ToList();
-    }
-    void CheckTableForIndexex(DataTable studentTable)
-    {
-        var rowIndexes = new int[] {
-            ROW_CELL_START
-        };
 
-        var columnIndexes = new int[]{
-            START_FIO_CELL,
-            START_ST_COND_CELL,
-            START_SPEC_CODE_CELL,
-            START_SPEC_NAME_CELL,
-            START_GROUP_CELL
-        };
-
-        for(int i = 0; i < rowIndexes.Length; i++)
-            if(rowIndexes[i] >= studentTable.Rows.Count)
-                throw new AppExceptionBase($"Документ имеет не достаточное число строк. " +
-                $"Не найденная под номером: {rowIndexes[i] + 1}");
-        
-        for(int i = 0; i < columnIndexes.Length; i++)
-            if(columnIndexes[i] >= studentTable.Columns.Count)
-                throw new AppExceptionBase($"Документ имеет не достаточное число столбцов. " +
-                $"Не найденная под номером: {columnIndexes[i] + 1}");
-    }
-    Group GetGroup(DataTable studentTable)
-    {
-        var fios = Fios(studentTable);
-        var specCodes = SpecCodes(studentTable);
-        var specNames = SpecNames(studentTable);
-        // var faculs = Faculs(studentTable);
-        var groups = Groups(studentTable);
-        // var courses = Courses(studentTable);
-        var group = groups.Select((groupName,i) => {
-                    Speciality speciality = new Speciality(
-                        name: UnionSpecCodeAndSpecName(specNames[i], specCodes[i]),
-                        code: specCodes[i]
-                    );
-
-                    var group = new Group(
-                        speciality: speciality,
-                        courseNum: groupName.ParseCourseFromGroup(),
-                        facultative: groupName.ParseFacultativeType(),
-                        name: groupName
-                    );
-                    return group;
-                }
-            ).First();
-        return group;
-    }
-    string UnionSpecCodeAndSpecName(string spec, string code) => $"{code} {spec}";
     
     
-    string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_FIO_CELL)
-        .Select(s => s.Replace("ё", "е"))
-        .AnyIsNotMatchedForRegex(FIO_PATERN_REGEX, "ФИО")
-        .ToArray();
+    string[] Fios(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, FIO_CELL_COLUMN));
     
-    // string[] Courses(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_COURSE_CELL);
+    string[] Conds(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, ST_COND_COLUMN));
 
-    // string[] Faculs(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_FACUL_CELL);
+    string[] SpecCodes(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, SPEC_CODE_COLUMN));
 
-    string[] Conds(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_ST_COND_CELL);
+    string[] SpecNames(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, SPEC_NAME_COLUMN));
 
-    string[] SpecCodes(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_SPEC_CODE_CELL)
-        .AnyIsNotMatchedForRegex(SPEC_CODE_ONLY_PATERN_REGEX, "код специальности")
-        .ToArray();
+    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, GROUP_COLUMN, IsRemoveAllSpaces: true));
 
-    string[] SpecNames(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_SPEC_NAME_CELL)
-        .AnyIsNotMatchedForRegex(SPEC_NAME_SYMBOLS_ONLY_REGEX, "название специаллности")
-        .ToArray();
-
-    string[] Groups(DataTable studentTable) => ReadColumnAsEnumarable(studentTable, START_GROUP_CELL)
-        .RemoveAllSpaces()
-        .AnyIsNotMatchedForGroup()
-        .ToArray();
-
-    string[] ReadColumnAsEnumarable(DataTable studentTable, int columnIndex)
-    {
-        List<string> listResult = new List<string>();
-        var i = ROW_CELL_START;
-        string? currentCell = null;
-        do
-        {
-            currentCell = studentTable.Rows[i][columnIndex].ToString();
-            if(!string.IsNullOrEmpty(currentCell))
-                listResult.Add(currentCell);
-            
-            i++;
-        }while(!string.IsNullOrEmpty(currentCell));
-        return listResult.ToLower().TrimEndings().NormolizeEmpties().ToArray();
-    }
+    
 }
+
+

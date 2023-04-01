@@ -15,12 +15,12 @@ public class HomeController : Controller
         "Перчук Ира Павловна",
         "Карась Юля Игнатьевна"
     };
-    readonly GroupsExcelParser _parser;
+    readonly GroupWithStudentsExcelReader _parser;
     readonly DbService  _dbService;
     readonly PracticeDataExcelParser _practiceParser;
     readonly OrganizationDataParser _orgParser;
     readonly TreateManager _treateManager;
-    public HomeController(GroupsExcelParser parser,
+    public HomeController(GroupWithStudentsExcelReader parser,
     DbService dbService, 
     PracticeDataExcelParser practiceParser,
     OrganizationDataParser orgParser,
@@ -42,7 +42,7 @@ public class HomeController : Controller
     public async Task<IActionResult> UploadGroupAndStudentsFile(IFormFile file)
     {
         using var excelStream = file.OpenReadStream();
-        var group = _parser.ParseExcel(excelStream);
+        var group = _parser.ReadExcel(excelStream);
         await _dbService.AddOrUpdateGroup(group);   
         return Ok();
     }
