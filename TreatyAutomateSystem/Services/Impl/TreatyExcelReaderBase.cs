@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Data;
 using Excel;
 using TreatyAutomateSystem.Helpers;
@@ -26,39 +27,39 @@ public abstract partial class TreatyExcelReaderBase
         bool IsToLower = true, 
         bool IsTrimEndings = true, 
         bool IsNormolizeEmpties = true,
-        bool IsRemoveAllSpaces = false
+        bool IsRemoveAllSpaces = false,
+        bool IsReplaceSomeRussianSymbols = false
     );
     
 
-    protected virtual void CheckTableForIndexex(DataTable studentTable)
+    protected virtual void CheckTableForIndexex(DataTable table)
     {
         for(int i = 0; i < RowIndexes.Length; i++)
-            if(RowIndexes[i] >= studentTable.Rows.Count)
+            if(RowIndexes[i] >= table.Rows.Count)
                 throw new AppExceptionBase($"Документ имеет не достаточное число строк. " +
                 $"Не найденная под номером: {RowIndexes[i] + 1}");
         
         for(int i = 0; i < ColumnIndexes.Length; i++)
-            if(ColumnIndexes[i] >= studentTable.Columns.Count)
+            if(ColumnIndexes[i] >= table.Columns.Count)
                 throw new AppExceptionBase($"Документ имеет не достаточное число столбцов. " +
                 $"Не найденная под номером: {ColumnIndexes[i] + 1}");
     }
 
-    protected virtual string[] ReadColumnAsArray(DataTable studentTable, ReadColumnAsEnumarableOptions options)
+    
+
+    protected virtual string[] ReadColumnAsArray(DataTable table, ReadColumnAsEnumarableOptions options)
     {
+        
         List<string> listResult = new List<string>();
-        var i = options.RowCellStart;
-        string? currentCell = null;
-        do
+        string? currentCell = "nonempty";
+        for(int i = options.RowCellStart; i < table.Rows.Count && !string.IsNullOrEmpty(currentCell); i++)
         {
-            currentCell = studentTable.Rows[i][options.ColumnIndex].ToString();
+            currentCell = table.Rows[i][options.ColumnIndex].ToString();
             if(!string.IsNullOrEmpty(currentCell))
                 listResult.Add(currentCell);
-            
-            i++;
-        }while(!string.IsNullOrEmpty(currentCell));
+        }
 
         IEnumerable<string> enRes = NormalizeBySettings(listResult, options);
-
         return enRes.ToArray();
     }
     protected virtual void ValidSheets(DataSet dataSet)
@@ -76,6 +77,8 @@ public abstract partial class TreatyExcelReaderBase
             enRes = enRes.NormolizeEmpties();
         if(options.IsRemoveAllSpaces)
             enRes = enRes.RemoveAllSpaces();
+        if(options.IsReplaceSomeRussianSymbols)
+            enRes = enRes.Replace("ё", "е").Replace("Ё", "Е");
         return enRes;
     }
 
@@ -87,17 +90,17 @@ public abstract partial class TreatyExcelReaderBase
         var dataSet = reader.AsDataSet();
         ValidSheets(dataSet);
 
-        var studentTable = dataSet.Tables[FirstSheetIndex];
+        var table = dataSet.Tables[FirstSheetIndex];
 
-        //CheckTableForIndexex(studentTable);
+        CheckTableForIndexex(table);
 
-        return studentTable;
+        return table;
     }
 }
 //парсер с группами
 public abstract partial class TreatyExcelReaderBase
 {
-    public GroupsParser GetGroupsParser => new GroupsParser();
+    protected GroupsParser GetGroupsParser => new GroupsParser();
 
     public class GroupsParser
     {
@@ -122,7 +125,7 @@ public abstract partial class TreatyExcelReaderBase
 
             void ValidGroupName()
             {
-                GroupNames.AnyIsNotMatchedForGroup();
+                GroupNames.AnyIsNotMatchedForGroup().ToArray();
             }
             
 
@@ -155,7 +158,7 @@ public abstract partial class TreatyExcelReaderBase
 //парсер для специальностей
 public abstract partial class TreatyExcelReaderBase
 {
-    public SpecialitiesParser GetSpecialitiesParser => new SpecialitiesParser();
+    protected SpecialitiesParser GetSpecialitiesParser => new SpecialitiesParser();
 
     public class SpecialitiesParser
     {
@@ -164,7 +167,7 @@ public abstract partial class TreatyExcelReaderBase
             public virtual void ValidData()
             {
                 ArraysLengthCheck();
-                ValidSpecialityNameAndCoder();
+                ValidSpecialityNameAndCode();
             }
             void ArraysLengthCheck()
             {
@@ -174,14 +177,14 @@ public abstract partial class TreatyExcelReaderBase
                 ) throw new AppExceptionBase("Данные заполнены не равномерно или пустые");
             }
 
-            void ValidSpecialityNameAndCoder()
+            void ValidSpecialityNameAndCode()
             {
                 if(SpecCodes is null)
-                    SpecNames.AnyIsNotMatchedForRegex(SPEC_NAME_WITHD_CODE_REGEX, "название специальности и код специальности");
+                    SpecNames.AnyIsNotMatchedForRegex(SPEC_NAME_WITHD_CODE_REGEX, "название специальности и код специальности").ToArray();
                 else
                 {
-                    SpecNames.AnyIsNotMatchedForRegex(SPEC_NAME_SYMBOLS_ONLY_REGEX, "название специальности");
-                    SpecCodes.AnyIsNotMatchedForRegex(SPEC_CODE_ONLY_PATERN_REGEX, "код специальности");
+                    SpecNames.AnyIsNotMatchedForRegex(SPEC_NAME_SYMBOLS_ONLY_REGEX, "название специальности").ToArray();
+                    SpecCodes.AnyIsNotMatchedForRegex(SPEC_CODE_ONLY_PATERN_REGEX, "код специальности").ToArray();
 
                 }
                 
@@ -214,7 +217,7 @@ public abstract partial class TreatyExcelReaderBase
 //парсер для студентов
 public abstract partial class TreatyExcelReaderBase
 {
-    public StudentParser GetStudentParser => new StudentParser();
+    protected StudentParser GetStudentParser => new StudentParser();
 
     public class StudentParser
     {
@@ -235,8 +238,7 @@ public abstract partial class TreatyExcelReaderBase
 
             void ValidFios()
             {
-                Fios.Select(s => s.Replace("ё", "е"))
-                    .AnyIsNotMatchedForRegex(FIO_PATERN_REGEX, "ФИО")
+                Fios.AnyIsNotMatchedForRegex(FIO_PATERN_REGEX, "ФИО")
                     .ToArray();
                 
             }
@@ -248,6 +250,7 @@ public abstract partial class TreatyExcelReaderBase
         
         public IEnumerable<Student> FillGroupAndGetStudents(GroupArraysAsPassStudentsData data)
         {
+            data.ValidData();
             var fios = data.Fios;
             var stdConds = data.StudyConditions;
             
@@ -262,6 +265,65 @@ public abstract partial class TreatyExcelReaderBase
             });
             data.Group.Students = students.ToList();
             return students;
+        }
+    }
+}
+
+//парсер для компании
+public abstract partial class TreatyExcelReaderBase
+{
+    protected CompanyParser GetCompanyParser => new CompanyParser();
+    public class CompanyParser
+    {
+        public record GroupArraysAsPassCompaniesData(string[] CompanyNames, string[] DirectorPracticeNames, string[] Recvizits, string[] NaOsnovanii)
+        {
+            public virtual void ValidData()
+            {
+                ArraysLengthCheck();
+                ValidRecvizits();
+                ValidNaOsnovanii();
+                ValidCompanyName();
+                ValidPracticeDirectore();
+            }
+            void ArraysLengthCheck()
+            {
+                if(
+                    CompanyNames.Length == 0 ||
+                    CompanyNames.Length != DirectorPracticeNames.Length ||
+                    CompanyNames.Length != Recvizits.Length
+                ) throw new AppExceptionBase("Данные заполнены не равномерно или пустые");
+            }
+
+            void ValidCompanyName()
+            {
+                CompanyNames.AnyIsNotMatchedForRegex(COMPANY_NAME_REGEX, "имя компании", System.Text.RegularExpressions.RegexOptions.None).ToArray();
+            }
+            void ValidRecvizits()
+            {                
+                Recvizits.AnyIsNotMatchedForRegex(RICVIZIT_REGEX, "риквизит", System.Text.RegularExpressions.RegexOptions.None).ToArray();
+            }
+            void ValidNaOsnovanii()
+            {
+                NaOsnovanii.AnyIsNotMatchedForRegex(NA_OSNOVANII_REGEX, "на основании").ToArray();
+            }
+            void ValidPracticeDirectore()
+            {
+                DirectorPracticeNames.AnyIsNotMatchedForRegex(PRACTICE_DIRECTOR_REGEX, "в лице", System.Text.RegularExpressions.RegexOptions.None).ToArray();
+            }
+
+        }
+
+
+        
+        public IEnumerable<Company> GetCompanies(GroupArraysAsPassCompaniesData data)
+        {
+            data.ValidData();
+            return data.CompanyNames.Select((name, i) => new Company{
+                Name = name,
+                Recvizit = data.Recvizits[i],
+                DirectorName = data.DirectorPracticeNames[i],
+                NaOsnovanii = data.NaOsnovanii[i]
+            });
         }
     }
 }

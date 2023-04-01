@@ -53,10 +53,18 @@ public class UnitTest1
     public  void Test1()
     {
         var practiceDataExcelParser = new PracticeDataExcelReader();
+
         var res = practiceDataExcelParser.ReadExcel(System.IO.File.OpenRead("/home/f/Documents/dotnet-app/TAS/tests/список практик СПО 2022-23.xls"));
+
+
         // var groupseExcelPArser = new GroupWithStudentsExcelReader();
 
         // var res = groupseExcelPArser.ReadExcel(System.IO.File.OpenRead("/home/f/Documents/dotnet-app/TAS/tests/test.xls"));
+
+
+        // var reader = new OrganizationDataParser();
+
+        // var res = reader.ParseExcel(System.IO.File.OpenRead("/home/f/Documents/dotnet-app/TAS/tests/Реквизиты предприятий.xls"));
     
     }
 }

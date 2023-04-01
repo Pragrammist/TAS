@@ -10,16 +10,29 @@ public static class EnumerableHelpers
 
     public static IEnumerable<string> RemoveAllSpaces(this IEnumerable<string> en) => en.Select(s => s.Replace(" ", string.Empty));
 
+    public static IEnumerable<string> Replace(this IEnumerable<string> en, string oldValue, string newValue) => en.Select(s => s.Replace(oldValue, newValue));
+
     public static IEnumerable<string> NormolizeEmpties(this IEnumerable<string> en) => en.Select(s => s.NormolizeEmpties());
 
     public static IEnumerable<string> GiveSpecialityCode(this IEnumerable<string> en) => en.Select(s => s.ParseSpecialityCode());
 
+    public static IEnumerable<string> AnyIsNotMatchedForRegexes(
+        this IEnumerable<string> en, 
+        string[] regexes, 
+        string regexName,
+        RegexOptions regOpt = RegexOptions.IgnoreCase
+    ) => 
+        en.Select(s => s.HasAnyRegexSignature(regexes) 
+        ? s 
+        : throw new AppExceptionBase($"{s} не является {regexName}"));
+
     public static IEnumerable<string> AnyIsNotMatchedForRegex(
         this IEnumerable<string> en, 
         string regex, 
-        string regexName
+        string regexName,
+        RegexOptions regOpt = RegexOptions.IgnoreCase
     ) => 
-        en.Select(s => Regex.IsMatch(s, regex, RegexOptions.IgnoreCase) 
+        en.Select(s => Regex.IsMatch(s, regex, regOpt) 
         ? s 
         : throw new AppExceptionBase($"{s} не является {regexName}"));
 

@@ -74,7 +74,7 @@ public class GroupWithStudentsExcelReader : TreatyExcelReaderBase
 
     
     
-    string[] Fios(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, FIO_CELL_COLUMN));
+    string[] Fios(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, FIO_CELL_COLUMN, IsReplaceSomeRussianSymbols: true));
     
     string[] Conds(DataTable studentTable) => ReadColumnAsArray(studentTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, ST_COND_COLUMN));
 

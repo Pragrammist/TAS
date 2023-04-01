@@ -4,7 +4,7 @@ public static class RegexConsts
 {
     public const string FIO_EXCEL_COLUMN_REGEX = @"фамилия.*имя.*отчество";
 
-    public const string FIO_PATERN_REGEX = @"^[а-я]*\s[а-я]*\s[а-я]*$";
+    public const string FIO_PATERN_REGEX = @"^[а-я]+\s[а-я]+\s[а-я]+$";
 
     public const string GROUP_PATERN_HITH_REGEX = @"^\d{3}\w?\w?\w?-\d{1,}\w?\w?\w?-\d{1}к?$"; // ВЫШКА
 
@@ -21,7 +21,13 @@ public static class RegexConsts
 
     public const string SPEC_NAME_SYMBOLS_ONLY_REGEX = @"^(\D\w*\D\s?\D){1,}$";
 
-    public const string STUDY_COND_REGEX = @"к$";
+    public const string RICVIZIT_REGEX = @"(ИНН)*(КПП)*";
 
     public const string SPEC_NAME_WITHD_CODE_REGEX = @"^\d{2}.\d{2}.\d{2}\s(\D\w*\D\s?\D){1,}$";
+
+    public const string PRACTICE_DIRECTOR_REGEX = @"[A-Я][а-я]+\s[A-Я][а-я]+\s[A-Я][а-я]+";
+
+    public const string NA_OSNOVANII_REGEX = @"(^устава$)*(от\s*\d{2}.\d{2}.\d{4})*";
+
+    public const string COMPANY_NAME_REGEX = @"([А-Я][а-я]+)*([А-Я]{2,})*(«\w*»)*";
 }

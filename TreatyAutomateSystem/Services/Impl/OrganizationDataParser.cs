@@ -1,18 +1,22 @@
 using TreatyAutomateSystem.Models;
 using System.Data;
 using Excel;
+using static TreatyAutomateSystem.Services.TreatyExcelReaderBase.CompanyParser;
 
 namespace TreatyAutomateSystem.Services;
 
-public class OrganizationDataParser
+
+public class OrganizationDataParser : TreatyExcelReaderBase
 {
-    public OrganizationDataParser()
-    {
-        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-    }
+    protected override int FirstSheetIndex => FIRST_SHEET_INDEX;
+
+    protected override int[] RowIndexes => new int [] { ROW_CELL_START };
+
+    protected override int[] ColumnIndexes => new int [] { START_ORG_NAME_CELL, START_PRACTICE_DIRECTOR_CELL, START_NA_OSNOVANII_CELL, START_RECVIZIT_CELL };
+
+
     const int FIRST_SHEET_INDEX = 0;
     const int ROW_CELL_START = 1;
-    const int ROW_CELL_VALID_FIELDS = 0;
     const int START_ORG_NAME_CELL = 1;
     const int START_PRACTICE_DIRECTOR_CELL = 2;
     const int START_NA_OSNOVANII_CELL = 3;
@@ -23,54 +27,25 @@ public class OrganizationDataParser
 
     public IEnumerable<Company> ParseExcel(Stream stream)
     {
-        using var reader = ExcelReaderFactory.CreateBinaryReader(stream);
-        var dataSet = reader.AsDataSet();
+        var companiesTable = GetDataTable(stream);
+
+        var data = new GroupArraysAsPassCompaniesData(
+            CompNames(companiesTable),
+            DirectorPracticeName(companiesTable),
+            Recvizits(companiesTable),
+            NaOsnovanii(companiesTable)
+        );
         
-        var compTable =  dataSet.Tables[FIRST_SHEET_INDEX] ?? throw new InvalidOperationException("students file is empty");
-        
-        return GetCompanies(compTable);
+        return GetCompanyParser.GetCompanies(data);
     }
     
-    IEnumerable<Company> GetCompanies(DataTable compTable)
-    {
-        var orgNames = OrgNames(compTable);
+    
 
-        var dirNames = DirectorPracticeName(compTable);
+    string[] NaOsnovanii(DataTable compTable) => ReadColumnAsArray(compTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, START_NA_OSNOVANII_CELL, IsToLower: false));
 
-        var ricvs = Recvizits(compTable);
+    string[] CompNames(DataTable compTable) => ReadColumnAsArray(compTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, START_ORG_NAME_CELL, IsToLower: false));
 
-        var naOsnovanii = NaOsnovanii(compTable);
-        return orgNames.Select((name, i) => new Company{
-            Name = orgNames[i],
-            Recvizit = ricvs[i],
-            DirectorName = dirNames[i],
-            NaOsnovanii = naOsnovanii[i]
-        });
-    }
+    string[] DirectorPracticeName(DataTable compTable) => ReadColumnAsArray(compTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, START_PRACTICE_DIRECTOR_CELL, IsToLower: false, IsReplaceSomeRussianSymbols: true));
 
-    string[] NaOsnovanii(DataTable compTable) => ReadColumnAsEnumarable(compTable, START_NA_OSNOVANII_CELL);
-
-    string[] OrgNames(DataTable compTable) => ReadColumnAsEnumarable(compTable, START_ORG_NAME_CELL);
-
-    string[] DirectorPracticeName(DataTable compTable) => ReadColumnAsEnumarable(compTable, START_PRACTICE_DIRECTOR_CELL);
-
-    string[] Recvizits(DataTable compTable) => ReadColumnAsEnumarable(compTable, START_RECVIZIT_CELL);
-
-    string[] ReadColumnAsEnumarable(DataTable compTable, int columnIndex)
-    {
-        List<string> listResult = new List<string>();
-        var i = ROW_CELL_START;
-        string? currentCell = null;
-        do
-        {
-            if(i >= compTable.Rows.Count)
-                break;
-            currentCell = compTable.Rows[i][columnIndex].ToString();
-            if(!string.IsNullOrEmpty(currentCell))
-                listResult.Add(currentCell);
-            
-            i++;
-        }while(!string.IsNullOrEmpty(currentCell));
-        return listResult.ToArray();
-    }
+    string[] Recvizits(DataTable compTable) => ReadColumnAsArray(compTable, new ReadColumnAsEnumarableOptions(ROW_CELL_START, START_RECVIZIT_CELL, IsToLower: false));
 }
