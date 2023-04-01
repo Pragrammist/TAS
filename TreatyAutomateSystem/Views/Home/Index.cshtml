@@ -90,7 +90,7 @@
                             
                         },
                         error: function(textStatus){
-                            ShowMessage("): Что-то пошло не так, проверьте файл!");
+                            ShowMessage(`${textStatus.responseText}`);
                         }
                     }
                 );

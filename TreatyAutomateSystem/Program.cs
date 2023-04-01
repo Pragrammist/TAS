@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using TreatyAutomateSystem.Services;
+using TreatyAutomateSystem.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,19 @@ if (!app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
+app.Use(async(context, next) =>
+{
+    try{
+        await next.Invoke(); 
+    }catch(AppExceptionBase ex)
+    {
+        context.Response.StatusCode = 400;
+        await context.Response.WriteAsync(ex.Message);
+    }
+    
+});
+
 app.UseStaticFiles();
 
 

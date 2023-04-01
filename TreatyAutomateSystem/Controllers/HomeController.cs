@@ -37,7 +37,7 @@ public class HomeController : Controller
     {
         return View();
     }
-
+    
     [HttpPost("/files/uploadgroup")]
     public async Task<IActionResult> UploadGroupAndStudentsFile(IFormFile file)
     {

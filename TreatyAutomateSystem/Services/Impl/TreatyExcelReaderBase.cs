@@ -120,7 +120,7 @@ public abstract partial class TreatyExcelReaderBase
                     (PracticeTypes is not null && GroupNames.Length != PracticeTypes.Length) || 
                     (PracticeStarts is not null && GroupNames.Length != PracticeStarts.Length) ||
                     (PracticeEnds is not null && GroupNames.Length != PracticeEnds.Length)
-                ) throw new AppExceptionBase("Данные заполнены не равномерно или пустые");
+                ) throw new AppExceptionBase("Данные заполнены не равномерно или пусто. Проверьте файл");
             }
 
             void ValidGroupName()
@@ -174,7 +174,7 @@ public abstract partial class TreatyExcelReaderBase
                 if(
                     SpecNames.Length == 0 ||
                     (SpecCodes is not null && SpecNames.Length != SpecCodes.Length)
-                ) throw new AppExceptionBase("Данные заполнены не равномерно или пустые");
+                ) throw new AppExceptionBase("Данные заполнены не равномерно или пусто. Проверьте файл");
             }
 
             void ValidSpecialityNameAndCode()
@@ -233,7 +233,7 @@ public abstract partial class TreatyExcelReaderBase
                 if(
                     Fios.Length == 0 ||
                     Fios.Length != StudyConditions.Length
-                ) throw new AppExceptionBase("Данные заполнены не равномерно или пустые");
+                ) throw new AppExceptionBase("Данные заполнены не равномерно или пусто. Проверьте файл");
             }
 
             void ValidFios()
@@ -291,7 +291,7 @@ public abstract partial class TreatyExcelReaderBase
                     CompanyNames.Length == 0 ||
                     CompanyNames.Length != DirectorPracticeNames.Length ||
                     CompanyNames.Length != Recvizits.Length
-                ) throw new AppExceptionBase("Данные заполнены не равномерно или пустые");
+                ) throw new AppExceptionBase("Данные заполнены не равномерно или пусто. Проверьте файл");
             }
 
             void ValidCompanyName()
