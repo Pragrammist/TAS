@@ -67,10 +67,23 @@ public static class StringRegexHelpers
     public static bool HasAnyRegexSignature(this string data, params string[] regexs)
     {
         foreach(var regex in regexs)
-            if(new Regex(regex, RegexOptions.IgnoreCase).Match(data).Success)
+            if(Regex.IsMatch(data, regex))
                     return true;
         return false;
     }
-
+    public static Match GiveFirstMatchedRegex(this string data, params string[] regexs)
+    {
+        foreach(var regex in regexs)
+            if(Regex.IsMatch(data, regex))
+                    return Regex.Match(data, regex);
+        throw new AppExceptionBase($"в {data} не совпадает с regex: {String.Join(" ", regexs)}");
+    }
+    public static bool HasAllRegexSignature(this string data, params string[] regexs)
+    {
+        foreach(var regex in regexs)
+            if(!Regex.IsMatch(data, regex))
+                    return false;
+        return true;
+    }
     
 }

@@ -5,11 +5,11 @@ namespace TreatyAutomateSystem.Services;
 public class TreateManager
 {
     readonly DbService _service;
-    readonly StudentOneprofileTreateService _treateService;
+    readonly StudentOneprofileTreatyService _treateService;
     readonly CompanyManyprofilesTreateService _manyProfileTreateService;
     public TreateManager(
         DbService service, 
-        StudentOneprofileTreateService treateService, 
+        StudentOneprofileTreatyService treateService, 
         CompanyManyprofilesTreateService manyProfileTreateService)
     {
         _service = service;
@@ -44,19 +44,19 @@ public class TreateManager
         var res = await _treateService.InsertDataToTreate(studentData);
         return res;
     }
-    StudentOneprofileTreateService.StudentData GetStudentData(Student student, Company company, Group group, Speciality speciality) =>
-        new StudentOneprofileTreateService.StudentData  {
-            Name = student.Fio,
-            Speciality = speciality.Name,
-            PracticeType = group.PracticeType?.GetValueForTreatyFromDescription() ?? "",
-            CourseNum = group.CourseNum ?? "",
-            Group = group.Name,
-            Start = group.PracticeStart ?? new DateTime(),
-            End = group.PracticeEnd ?? new DateTime(),
-            NaOsnovanii = company.NaOsnovanii,
-            PracticeDirector = company.DirectorName,
-            CompanyRicvizit = company.Recvizit,
-            CompanyName = company.Name
-        };
+    StudentOneprofileTreatyService.StudentTreatyData GetStudentData(Student student, Company company, Group group, Speciality speciality) =>
+        new StudentOneprofileTreatyService.StudentTreatyData(
+                company.NaOsnovanii, 
+                company.Name, 
+                company.DirectorName, 
+                company.Recvizit, 
+                student.Fio, 
+                speciality.Name, 
+                group.PracticeType?.GetValueForTreatyFromDescription() ?? "",
+                group.CourseNum ?? "", 
+                group.Name, 
+                group.PracticeStart ?? new DateTime(), 
+                group.PracticeEnd ?? new DateTime()
+            );
     
 }
