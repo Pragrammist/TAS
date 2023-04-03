@@ -47,9 +47,10 @@
                 trEl.append(tdPrEnd);
 
                 let practiceTypeEl = $("<select>")
-                                        .append("<option>производственная практика</option>")
-                                        .append("<option>учебная практика</option>")
-                                        .append("<option>преддипломная практика</option>");                
+                                        .append("<option value='0'>преддипломная практика</option>")
+                                        .append("<option value='1'>учебная практика</option>")
+                                        .append("<option value='2'>производственная практика</option>");
+                                        
                 practiceTypeEl.val(practiceType);
                 let tdPracticeEl = $("<td>").append(practiceTypeEl);
                 trEl.append(tdPracticeEl);

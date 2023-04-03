@@ -13,7 +13,7 @@ public static class StringRegexHelpers
         else if(str.Contains("производ"))
             return PracticeType.Factory;
         else if(str.Contains("учеб"))
-            return PracticeType.Factory;
+            return PracticeType.Learn;
         
         throw new AppExceptionBase($"непонятный тип практики {str}");
     }
