@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using TreatyAutomateSystem.Models;
 using TreatyAutomateSystem.Services;
+using TreatyAutomateSystem.Helpers;
 
 namespace TreatyAutomateSystem.Controllers;
 
@@ -85,7 +86,7 @@ public class HomeController : Controller
     
     [HttpGet("/files/generate")]
     public async Task<IActionResult> GenerateDocx(string studentId, string companyName)
-    {
+    {    
         var doc = await _treateManager.GenerateOneProfileTreateTypeDocument(studentId, companyName);
         var student = await _dbService.FindStudentById(studentId);
         var file = File(doc, "application/vnd.openxmlformats");

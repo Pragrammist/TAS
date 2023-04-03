@@ -38,7 +38,7 @@ public class TreatyServiceBase
     
     
 
-    protected WordprocessingDocument InsertBaseData(TreatyData data)
+    protected WordprocessingDocument InsertBaseDataToNewCopyOfDocument(TreatyData data)
     {
         var doc = GetCopyOfDocument(_options.TreatePlatePath);
 
@@ -163,7 +163,7 @@ public class TreatyServiceBase
 
     protected void InsertDataInNextAfterMatchedRegexRow(InsertionDataArguments<string[]> args)
     {
-        var cells = CellsWhereInsertStudentData(args.Body, args.Regexs) ?? throw new AppExceptionBase($"не найден параграф место для {args.DataName}");
+        var cells = CellsWhereInsertStudentData(args.Body, args.Regexs) ?? throw new AppExceptionBase($"не найдена таблица для {args.DataName}");
         
         if(cells.Count() != args.Data.Length)
             throw new AppExceptionBase($"Проверьте таблицу для {args.DataName}");

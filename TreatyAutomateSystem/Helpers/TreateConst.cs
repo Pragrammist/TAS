@@ -11,7 +11,7 @@ public static class TreateConst
 
 
     public const string UNDER_DASH_REGEG = @"\s*_+\s*";
-    //(ИНН)?(КПП)?(БИК)?(\d+/\d+)*(счет\s*-\s*\d+)?(счет\s*–\s*\d+)?(счет)*(банк)*(\d+0{3,}\d+)*
+
     public static readonly string[] StudentTableRegex = new string[]{
                 @"вид\s*практической\s*подготовки",
                 @"срок\s*практической\s*подготовки",

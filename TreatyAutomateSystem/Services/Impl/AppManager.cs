@@ -6,11 +6,11 @@ public class TreateManager
 {
     readonly DbService _service;
     readonly StudentOneprofileTreatyService _treateService;
-    readonly CompanyManyprofilesTreateService _manyProfileTreateService;
+    readonly ManyprofilesTreatyService _manyProfileTreateService;
     public TreateManager(
         DbService service, 
         StudentOneprofileTreatyService treateService, 
-        CompanyManyprofilesTreateService manyProfileTreateService)
+        ManyprofilesTreatyService manyProfileTreateService)
     {
         _service = service;
         _treateService = treateService;
@@ -23,16 +23,11 @@ public class TreateManager
 
         var studentData = GetCompanyData(company);
         
-        var res = await _manyProfileTreateService.InsertDataToTreate(studentData);
+        var res = await _manyProfileTreateService.InsertDataToTreaty(studentData);
         return res;
     }
-    CompanyManyprofilesTreateService.CompanyData GetCompanyData(Company company) => 
-        new CompanyManyprofilesTreateService.CompanyData{
-            NaOsnovanii = company.NaOsnovanii,
-            CompanyName = company.Name,
-            PracticeDirector = company.DirectorName,
-            CompanyRicvizit = company.Recvizit
-        };
+    ManyprofilesTreatyService.TreatyData GetCompanyData(Company company) => 
+        new ManyprofilesTreatyService.TreatyData(company.NaOsnovanii, company.Name, company.DirectorName, company.Recvizit);
     
     public async Task<Stream> GenerateOneProfileTreateTypeDocument(string id, string companyName)
     {

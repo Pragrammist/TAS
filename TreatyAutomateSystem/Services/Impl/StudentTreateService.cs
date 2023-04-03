@@ -1,5 +1,5 @@
 using DocumentFormat.OpenXml.Wordprocessing;
-using static TreatyAutomateSystem.Helpers.TreateHelpersMethod;
+using static TreatyAutomateSystem.Helpers.TreatyHelpersMethod;
 
 using static TreatyAutomateSystem.Helpers.TreateConst;
 using TreatyAutomateSystem.Helpers;
@@ -23,9 +23,9 @@ public class StudentOneprofileTreatyService : TreatyServiceBase
             DateTime start, 
             DateTime end) : base(naOsnovanii, companyName, practiceDirector, companyRicvizit)
         {
-            Name = name;
-            Speciality = speciality;
-            PracticeType = practiceType;
+            Name = name.ToUpperFirstLater();
+            Speciality = speciality.ToUpperFirstLaterFirstWord();
+            PracticeType = practiceType.ToUpperFirstLaterFirstWord();
             CourseNum = courseNum;
             Group = group;
             Start = start;
@@ -53,17 +53,10 @@ public class StudentOneprofileTreatyService : TreatyServiceBase
 
     }
     
-    bool IsMatchedForCompanyData(string text) => 
-            text.MatchedForCompanyName().Success && 
-            text.MatchedForPracticeDirector().Success && 
-            text.MatchedForNaOsnovanii().Success;
-    
-    
-    
 
     public async Task<Stream> InsertDataToTreate(StudentTreatyData student)
     {
-        using var doc = InsertBaseData(student);
+        using var doc = InsertBaseDataToNewCopyOfDocument(student);
         
         var body = GetBodyOfDocument(doc);
 

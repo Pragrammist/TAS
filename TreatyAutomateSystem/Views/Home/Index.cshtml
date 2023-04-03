@@ -160,7 +160,13 @@
             let indexOfSearchedStudentsEl = textsOfSearchResEl[0]-1;
             let student = searchedStudents[indexOfSearchedStudentsEl];
             let comp = $( "#companySelectorId" ).val();
-            window.location.href = `/files/generate?studentId=${student.id}&companyName=${comp}`;
+
+            if(comp)
+                window.location.href = `/files/generate?studentId=${student.id}&companyName=${comp}`;
+            else
+                ShowMessage("Укажите компанию");
+
+            
         });
         
         

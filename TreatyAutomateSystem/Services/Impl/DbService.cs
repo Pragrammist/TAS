@@ -1,6 +1,7 @@
 using System;
 using TreatyAutomateSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using TreatyAutomateSystem.Helpers;
 namespace TreatyAutomateSystem.Services;
 public class DbService
 {
@@ -106,9 +107,9 @@ public class DbService
         var toLowQ = query.ToLower();
         var students = _dbContext.Students.Include(s => s.Group)
             .Where(f => 
-                f.Fio == query ||
-                f.Fio.Contains(query)
-            ).Select(s => new FindStudentResult { Name = s.Fio, Group = s.Group.Name, Id = s.Id }).Take(10);
+                f.Fio == toLowQ ||
+                f.Fio.Contains(toLowQ)
+            ).Select(s => new FindStudentResult { Name = s.Fio.ToUpperFirstLater(), Group = s.Group.Name, Id = s.Id }).Take(10);
         return Task.FromResult((IEnumerable<FindStudentResult>)students);
     }   
     

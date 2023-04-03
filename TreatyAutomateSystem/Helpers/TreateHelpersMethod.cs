@@ -1,27 +1,45 @@
 using System.Text.RegularExpressions;
-using static TreatyAutomateSystem.Helpers.TreateConst;
 
 namespace TreatyAutomateSystem.Helpers;
 
-public static class TreateHelpersMethod
+public static class TreatyHelpersMethod
     {
-        public static Match MatchedForCompanyName(this string whereInsert) => 
-            new Regex(PARAGRAPH_PART_FOR_COMPANY_NAME_REGEX).Match(whereInsert);
-    
-        public static bool IsMatchedForCompanyName(this string whereInsert) => 
-            Regex.IsMatch(whereInsert, PARAGRAPH_PART_FOR_COMPANY_NAME_REGEX);
+        public static string ToUpperFirstLaterFirstWord(this string str)
+        {
+            const string WORD_REGEX = @"^[а-я]*$";
+            var firstWord = str.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(w => Regex.IsMatch(w, WORD_REGEX));
 
+            if(firstWord is null)
+                return str;
 
-        public static Match MatchedForPracticeDirector(this string whereInsert) => 
-            new Regex(PARAGRAPH_PART_FOR_PRACTICE_DIRECTOR_NAME).Match(whereInsert);
-    
-        public static bool IsMatchedForPracticeDirector(this string whereInsert) => 
-            Regex.IsMatch(whereInsert, PARAGRAPH_PART_FOR_PRACTICE_DIRECTOR_NAME);
+            var matchedWordWithUpperFirstLater = firstWord.ToUpperFirstLatter();
 
+            return str.Replace(firstWord, matchedWordWithUpperFirstLater);
+        }
 
-        public static Match MatchedForNaOsnovanii(this string whereInsert) => 
-            new Regex(PARAGRAPH_PART_FOR_NA_OSNOVANII).Match(whereInsert);
+        public static string ToUpperFirstLater(this string str)
+        {
+            const string WORD_REGEX = @"^[а-я]*$";
+            const char SEPARATOR = ' ';
+            var words = str
+                .Split(SEPARATOR)
+                .Select(w => 
+                    Regex.IsMatch(w, WORD_REGEX) 
+                        ? w.ToUpperFirstLaterFirstWord() 
+                        : w
+                    );
+            var newStr = String.Join(SEPARATOR, words);
+            return newStr;
+        }
 
-        public static bool IsMatchedForNaOsnovanii(this string whereInsert) => 
-            Regex.IsMatch(whereInsert, PARAGRAPH_PART_FOR_NA_OSNOVANII);
+        static string ToUpperFirstLatter(this string str)
+        {
+            if(str.Length == 0)
+                return str;
+
+            if(str.Length == 1)
+                return str.ToUpper();
+
+            return str.First().ToString().ToUpper() + str[1..];
+        }
     }

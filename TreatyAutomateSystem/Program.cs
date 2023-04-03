@@ -7,17 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 var conf = builder.Configuration;
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<StudentOneprofileTreatyService.Options>(s => 
-        new StudentOneprofileTreatyService.Options("Docs", "Docs/Однопрофильный.docx")
-    );
-builder.Services.AddTransient<CompanyManyprofilesTreateService.Options>(s => 
-    new CompanyManyprofilesTreateService.Options {
-        FolderPathToSave = "Docs",
-        TreatePlatePath = "Docs/Многопрофильный.docx"
-    });
 
-builder.Services.AddTransient<CompanyManyprofilesTreateService>();
-builder.Services.AddTransient<StudentOneprofileTreatyService>();
+builder.Services.AddTransient<ManyprofilesTreatyService>(s => 
+    new ManyprofilesTreatyService(
+        new ManyprofilesTreatyService.Options("Docs", "Docs/Многопрофильный.docx")
+    )
+);
+builder.Services.AddTransient<StudentOneprofileTreatyService>(s => 
+    new StudentOneprofileTreatyService(
+        new StudentOneprofileTreatyService.Options("Docs", "Docs/Однопрофильный.docx")
+    )
+);
 builder.Services.AddTransient<GroupWithStudentsExcelReader>();
 builder.Services.AddScoped<DbService>();
 builder.Services.AddScoped<TreateManager>();
@@ -42,6 +42,7 @@ app.Use(async(context, next) =>
         await next.Invoke(); 
     }catch(AppExceptionBase ex)
     {
+        context.Response.Headers["Content-Type"] = "text/plain; charset=utf-8";
         context.Response.StatusCode = 400;
         await context.Response.WriteAsync(ex.Message);
     }
