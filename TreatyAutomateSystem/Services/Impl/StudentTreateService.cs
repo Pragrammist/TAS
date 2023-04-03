@@ -74,7 +74,7 @@ public class StudentOneprofileTreatyService : TreatyServiceBase
 
     void InsertStudentData(Body body, StudentTreatyData student)
     {
-        var data = new InsertionStringArrayDataArguments(body, PrepareStudentDataToInsert(student), "данные студента", StudentTableRegex);
+        var data = new InsertionDataArguments<string[]>(body, PrepareStudentDataToInsert(student), "данные студента", StudentTableRegex);
 
         InsertDataInNextAfterMatchedRegexRow(data);
     }

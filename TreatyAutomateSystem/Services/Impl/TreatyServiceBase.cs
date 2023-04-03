@@ -9,6 +9,13 @@ using TreatyAutomateSystem.Helpers;
 
 namespace TreatyAutomateSystem.Services;
 
+
+public class S{
+   
+    
+
+}
+
 public class TreatyServiceBase
 {
     protected readonly Options _options;
@@ -66,27 +73,13 @@ public class TreatyServiceBase
         return doc;
     }
 
-    protected record InsertionDataArgumentsBase(Body Body,string DataName, string[] Regexs);
+    protected record InsertionDataArguments<DataType>(Body Body, DataType Data,string DataName, string[] Regexs);
 
-    protected record InsertionStringDataArguments: InsertionDataArgumentsBase 
-    {
-        public string Data { get; set; }
-        public InsertionStringDataArguments (Body body, string data, string dataName, string[] regexs) : base(body, dataName, regexs)
-        {
-            Data = data;
-        }
-    }
+    
 
-    protected record InsertionStringArrayDataArguments: InsertionDataArgumentsBase 
-    {
-        public string[] Data { get; set; }
-        public InsertionStringArrayDataArguments (Body body, string[] data, string dataName, string[] regexs) : base(body, dataName, regexs)
-        {
-            Data = data;
-        }
-    }
 
-    void InsertNewText(Paragraph paragraph, string insertText)
+
+    void InsertNewText(OpenXmlElement paragraph, string insertText)
     {
         var run = paragraph.First(r => r is Run);
         
@@ -98,7 +91,7 @@ public class TreatyServiceBase
         var text = new Text(insertText);
         run.AppendChild(text);
     }
-    protected void InsertDataToEmptyTableCellInRowNearWithMatchedCell(InsertionStringDataArguments arg)
+    protected void InsertDataToEmptyTableCellInRowNearWithMatchedCell(InsertionDataArguments<string> arg)
     {
         var cell = CellWhereInsertDataNearWithRegex(arg.Body, arg.Regexs) ?? throw new AppExceptionBase($"не найдена таблица подходяшая для {arg.DataName}");
         var par = (Paragraph)cell.First(p => p is Paragraph);
@@ -121,16 +114,16 @@ public class TreatyServiceBase
     {
         var body = GetBodyOfDocument(doc);
 
-        InsertDataToEmptyTableCellInRowNearWithMatchedCell(new InsertionStringDataArguments(body, data.CompanyRicvizit, "Реквизит", DgtuRecvizitRegex));
+        InsertDataToEmptyTableCellInRowNearWithMatchedCell(new InsertionDataArguments<string>(body, data.CompanyRicvizit, "Реквизит", DgtuRecvizitRegex));
 
-        InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(new InsertionStringDataArguments(body, data.CompanyName, "стороны, и_" ,new [] {PARAGRAPH_PART_FOR_COMPANY_NAME_REGEX}));
+        InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(new InsertionDataArguments<string>(body, data.CompanyName, "стороны, и_" ,new [] {PARAGRAPH_PART_FOR_COMPANY_NAME_REGEX}));
 
-        InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(new InsertionStringDataArguments(body, data.NaOsnovanii, "основании_", new [] {PARAGRAPH_PART_FOR_NA_OSNOVANII}));
+        InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(new InsertionDataArguments<string>(body, data.NaOsnovanii, "основании_", new [] {PARAGRAPH_PART_FOR_NA_OSNOVANII}));
 
-        InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(new InsertionStringDataArguments(body, data.PracticeDirector, "лице_", new [] {PARAGRAPH_PART_FOR_PRACTICE_DIRECTOR_NAME}));
+        InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(new InsertionDataArguments<string>(body, data.PracticeDirector, "лице_", new [] {PARAGRAPH_PART_FOR_PRACTICE_DIRECTOR_NAME}));
     }
 
-    protected void InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(InsertionStringDataArguments arg)
+    protected void InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(InsertionDataArguments<string> arg)
     {
         var p = arg.Body.FirstOrDefault(s => s is Paragraph && s.InnerText.HasAnyRegexSignature(arg.Regexs)) ?? throw new AppExceptionBase($"не найден параграф для {arg.DataName}");
         var run = p.First(r => r is Run && r.InnerText.HasAnyRegexSignature(arg.Regexs));
@@ -168,10 +161,12 @@ public class TreatyServiceBase
     
     
 
-    protected void InsertDataInNextAfterMatchedRegexRow(InsertionStringArrayDataArguments args)
+    protected void InsertDataInNextAfterMatchedRegexRow(InsertionDataArguments<string[]> args)
     {
         var cells = CellsWhereInsertStudentData(args.Body, args.Regexs) ?? throw new AppExceptionBase($"не найден параграф место для {args.DataName}");
         
+        if(cells.Count() != args.Data.Length)
+            throw new AppExceptionBase($"Проверьте таблицу для {args.DataName}");
         // мы горизонтально проходим по таблице и вставляем туда данные
         // в правильном порядке
         int i = 0;
@@ -198,7 +193,7 @@ public class TreatyServiceBase
         => doc?.MainDocumentPart?.Document.Body ?? throw new NullReferenceException("body of treat is null");
 
 
-   
+    
    
    
 
