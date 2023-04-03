@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using static TreatyAutomateSystem.Helpers.RegexConsts;
 
 namespace TreatyAutomateSystem.Helpers;
 
@@ -6,7 +7,6 @@ public static class TreatyHelpersMethod
     {
         public static string ToUpperFirstLaterFirstWord(this string str)
         {
-            const string WORD_REGEX = @"^[а-я]*$";
             var firstWord = str.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(w => Regex.IsMatch(w, WORD_REGEX));
 
             if(firstWord is null)
@@ -19,7 +19,6 @@ public static class TreatyHelpersMethod
 
         public static string ToUpperFirstLater(this string str)
         {
-            const string WORD_REGEX = @"^[а-я]*$";
             const char SEPARATOR = ' ';
             var words = str
                 .Split(SEPARATOR)

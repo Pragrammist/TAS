@@ -2,13 +2,15 @@ namespace TreatyAutomateSystem.Helpers;
 
 public static class RegexConsts
 {
-    public const string FIO_EXCEL_COLUMN_REGEX = @"фамилия.*имя.*отчество";
-
     public const string FIO_PATERN_REGEX = @"^[а-я]+\s[а-я]+\s[а-я]+$";
 
-    public const string GROUP_PATERN_HITH_REGEX = @"^\d{3}\w?\w?\w?-\d{1,}\w?\w?\w?-\d{1}к?$"; // ВЫШКА
+    //^\d{3}\w?\w?\w?-\d{1,}\w?\w?\w?-\d{1}к?$
+    public const string GROUP_PATERN_HITH_REGEX = @"^\d{3}[а-я]?[а-я]?[а-я]?-\d{1,3}[а-я]?[а-я]?[а-я]?-\d{1}к?$"; // ВЫШКА
 
-    public const string GROUP_PATERN_SECONDARY_REGEX = @"^\d{3}(-11)?\w{2}-\d{1}к?$"; // СПО
+    //^\d{3}(-11)?(-9)?[а-я]{2,3}-\d{1}к?$
+    public const string GROUP_PATERN_SECONDARY_1_REGEX = @"^\d{3}(-11)?[а-я]{2,3}-\d{1}к?$"; // СПО
+    
+    public const string GROUP_PATERN_SECONDARY_2_REGEX = @"^\d{3}(-9)?[а-я]{2,3}-\d{1}к?$"; // СПО
 
     public const string COURSE_IN_GROUP_PATERN_REGEX = @"\d{1}к?$";
 
@@ -16,6 +18,7 @@ public static class RegexConsts
 
     public const string SPEC_CODE_ONLY_PATERN_REGEX = @"^\d{2}.\d{2}.\d{2}$";
 
+    public const string WORD_REGEX = @"^[а-я]*$";
 
     public const string NUMBER_IN_COURSE_PATEREN_REGEX = @"\d";
 

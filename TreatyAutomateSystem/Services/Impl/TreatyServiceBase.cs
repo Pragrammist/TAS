@@ -140,7 +140,7 @@ public class TreatyServiceBase
     }
     string GenerateCompDataText(string whereInsert, string data, string[] regexs)
     {
-        var dataMatched = whereInsert.GiveFirstMatchedRegex(regexs);
+        var dataMatched = whereInsert.GiveFirstMatchedRegex(regexs:regexs);
         var forDataGeneratedText = InsertDataInsteadOfUnderDash(dataMatched.Value, data);
 
         var res = whereInsert

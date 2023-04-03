@@ -38,9 +38,9 @@ public static class StringRegexHelpers
     
     public static FacultativeType ParseFacultativeType(this string group)
     {
-        if(Regex.IsMatch(group, GROUP_PATERN_SECONDARY_REGEX))
+        if(group.HasAnyRegexSignature(GROUP_PATERN_SECONDARY_1_REGEX, GROUP_PATERN_SECONDARY_2_REGEX))
             return FacultativeType.Sec;
-        else if(Regex.IsMatch(group, GROUP_PATERN_HITH_REGEX))
+        else if(group.HasAnyRegexSignature(GROUP_PATERN_HITH_REGEX))
             return FacultativeType.Hgh;
         
         throw new AppExceptionBase($"Группа не правильного формата {group}");
@@ -57,7 +57,7 @@ public static class StringRegexHelpers
     }
 
     public static string ParseCourseFromGroup(this string str)
-    {
+    {   
         var mCourse = Regex.Match(str, COURSE_IN_GROUP_PATERN_REGEX, RegexOptions.IgnoreCase);
         if(!mCourse.Success)
             throw new AppExceptionBase($"группа не содержит в конце курс {str}");
@@ -71,7 +71,7 @@ public static class StringRegexHelpers
                     return true;
         return false;
     }
-    public static Match GiveFirstMatchedRegex(this string data, params string[] regexs)
+    public static Match GiveFirstMatchedRegex(this string data, RegexOptions opt = RegexOptions.None, params string[] regexs)
     {
         foreach(var regex in regexs)
             if(Regex.IsMatch(data, regex))
