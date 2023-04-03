@@ -16,7 +16,14 @@ public class S{
 
 }
 
-public class TreatyServiceBase
+public interface ITreatyService<InputDataType>
+{
+    Stream InsertDataToTreate(InputDataType data);
+
+    Stream TestTreatyTemplate(InputDataType data, Stream treatyTemplate);
+}
+
+public abstract class TreatyServiceBase//<InputDataType> : ITreatyService<InputDataType>
 {
     protected readonly Options _options;
     public record TreatyData (
@@ -31,12 +38,20 @@ public class TreatyServiceBase
         string TreatePlatePath
     );
 
-    public TreatyServiceBase(Options options)
+    protected TreatyServiceBase(Options options)
     {
         _options = options;
     }
     
+    //public abstract Stream InsertDataToTreate(InputDataType data);
     
+
+    public void TestTreatyTemplate(TreatyData data, Stream treatyTemplate)
+    {
+        var wordProccesing = WordprocessingDocument.Create(treatyTemplate, WordprocessingDocumentType.Document);
+        var body = GetBodyOfDocument(wordProccesing);
+
+    }
 
     protected WordprocessingDocument InsertBaseDataToNewCopyOfDocument(TreatyData data)
     {
@@ -217,4 +232,6 @@ public class TreatyServiceBase
         var fileName = $"{data.CompanyName}{extToSave}";
         return fileName;
     }
+
+    
 }

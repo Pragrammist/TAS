@@ -7,9 +7,13 @@ using TreatyAutomateSystem.Helpers;
 public class AdminController : Controller
 {
     readonly DbService _dbService;
-    public AdminController(DbService dbService)
+    readonly StudentOneprofileTreatyService _oneprofileTreatyService;
+    readonly ManyprofilesTreatyService _manyprofilesTreatyService;
+    public AdminController(DbService dbService, StudentOneprofileTreatyService oneprofileTreatyService, ManyprofilesTreatyService manyprofilesTreatyService)
     {
         _dbService = dbService;
+        _oneprofileTreatyService = oneprofileTreatyService;
+        _manyprofilesTreatyService = manyprofilesTreatyService;
     }
     [Route("{pageType}")]
     public async Task<IActionResult> Index(AdminPageType pageType, string? group = null)
@@ -82,4 +86,13 @@ public class AdminController : Controller
             value: specialities
         );
     }
+
+    [HttpPost("admin/files/treaty")]
+    public IActionResult UploadTreatyTemplate(UploadTreatyModel model)
+    {
+        var fileName = GetTemplateProfileName(model);
+        //d_manyprofilesTreatyService.InsertDataToTreaty();
+        return Content($"{model.TreateType} {model.TreatyTemplate.FileName}");
+    }
+    string GetTemplateProfileName(UploadTreatyModel model) => $"{model.TreateType.GetValueForTreatyFromDescription()}{Path.GetExtension(model.TreatyTemplate.FileName)}";
 }

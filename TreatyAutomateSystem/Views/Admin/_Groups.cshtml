@@ -8,8 +8,8 @@
                 let name = group.name;
                 let spec = group.speciality.name;
                 let facult = group.facultative;
-                let practiceStart = group.practiceStart;
-                let practiceEnd = group.practiceEnd;
+                let practiceStart = new Date(group.practiceStart);
+                let practiceEnd = new Date(group.practiceEnd);
                 let practiceType = group.practiceType;
                 let courseNum = group.courseNum;
                 
@@ -32,17 +32,15 @@
                 selectFacult.val(facult);
                 let tdFacultEl = $("<td>").append(selectFacult);
                 trEl.append(tdFacultEl);
-
+                
                 let practiceStartDateTimeEl = $("<time>")
-                                                .text(practiceStart)
-                                                .attr("datetime", practiceStart);
+                                                .text(practiceStart.toLocaleString('ru', {  weekday: "long",year: "numeric",month: "long", day: "numeric"} ) )
                 let tdPrStart = $("<td>").append(practiceStartDateTimeEl);  
                 trEl.append(tdPrStart);
 
 
                 let practiceEnndDateTimeEl = $("<time>")
-                                                .text(practiceEnd)
-                                                .attr("datetime", practiceEnd);
+                                                .text(practiceEnd.toLocaleString('ru', {  weekday: "long", year: "numeric",month: "long", day: "numeric"}))
                 let tdPrEnd = $("<td>").append(practiceEnndDateTimeEl);  
                 trEl.append(tdPrEnd);
 
@@ -74,14 +72,14 @@
 <div>
     <table class="students-table">
         <tr>
-            <td>
+            @* <td>
                 <div class="cell-help-message">
                     Поиск групп
                 </div>
                 <div>
                     <input type="search" name="" id="" placeholder="номер группы">
                 </div>
-            </td>
+            </td> *@
         </tr>
         <tr class="students-table-headers">
             <th>ГРУППА</th>
@@ -93,7 +91,7 @@
             <th>КУРС</th>
         </tr>       
         <tr class="groupse-counters-update">
-            <td>
+            @* <td>
                 <div>
                     <button type="submit">Уменьшить у всех курс</button>
                 </div>
@@ -102,9 +100,9 @@
                 <div>
                     <button type="submit">Увеличить у всех курс</button>
                 </div>
-            </td>
+            </td> *@
         </tr>
-        <tr>
+        @* <tr>
             <td>
                 <div>
                     <button type="submit">Сохранить</button>
@@ -114,6 +112,6 @@
                 <button>Следующая</button>
                 <button>Назад</button>
             </td>    
-        </tr>
+        </tr> *@
     </table>
 </div>

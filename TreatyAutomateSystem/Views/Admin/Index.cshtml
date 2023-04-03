@@ -32,9 +32,9 @@
     <div class="header-el">
         <input type="search" name="" id="search-group-index" placeholder="номер группы">
     </div>
-    <div class="header-el">
+    @* <div class="header-el">
         <input type="search" name="" id="" placeholder="ФИО студента">
-    </div>
+    </div> *@
 }
 
 @section LSideBar
@@ -55,11 +55,11 @@
         <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies">Компании</a>
     </li>
     <li class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties">Шаблоны договоров(студенты)</a>
+        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties">Шаблоны договоров</a>
     </li>
-    <li class="header-el">
+    @* <li class="header-el">
         <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.CmpTreaties">Шаблоны договоров(компании)</a>
-    </li>
+    </li> *@
 </ul>
 @await Html.PartialAsync(calculatedPartialViewName, Model)
 

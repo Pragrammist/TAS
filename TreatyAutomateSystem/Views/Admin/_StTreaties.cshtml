@@ -1,6 +1,22 @@
+
 <div>
-    Шаблон договора
+    <h4>Шаблон договора</h4>
     <div>
-        <input type="file" name="" id="">
+        <form action="admin/files/treaty" enctype="multipart/form-data" method="post">
+            <div>
+                <label for="model.TreateType">Выберете тип договора</label>
+                <br>
+                <select name="model.TreateType">
+                    <option value="0">Однопрофильный</option>
+                    <option value="1">Многопрофильный</option>
+                </select>
+            </div>
+            <div>
+                <label for="model.TreatyTemplate">Загрузите договор</label>
+                <br>
+                <input type="file" name="model.TreatyTemplate" accept=".docx">
+            </div>  
+            <input type="submit" value="загрузить">
+        </form>
     </div>
 </div>
