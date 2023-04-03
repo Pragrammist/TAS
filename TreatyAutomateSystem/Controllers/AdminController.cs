@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TreatyAutomateSystem.Models;
 using TreatyAutomateSystem.Services;
+using TreatyAutomateSystem.Helpers;
 
 [Route("{controller}")]
 public class AdminController : Controller
@@ -37,6 +38,7 @@ public class AdminController : Controller
         var group = await _dbService.FindGroupOrDefault(name) ?? throw new NullReferenceException("Группа не найдена");
         foreach(var student in group.Students)
         {
+            student.Fio = student.Fio.ToUpperFirstLater();
             student.Group = new Group(
                 group.Speciality, 
                 group.Name, 
