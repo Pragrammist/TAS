@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace TreatyAutomateSystem.Models;
 
-public enum TreateType
+public enum TreatyType
 {
     [Description("Однопрофильный")]
     ONE_PROFILE = default,

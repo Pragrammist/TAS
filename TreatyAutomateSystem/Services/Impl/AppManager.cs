@@ -36,7 +36,7 @@ public class TreateManager
 
         var studentData = GetStudentData(student, company, student.Group, student.Group.Speciality);
         
-        var res = await _treateService.InsertDataToTreate(studentData);
+        var res = await _treateService.InsertDataToTreaty(studentData);
         return res;
     }
     StudentOneprofileTreatyService.StudentTreatyData GetStudentData(Student student, Company company, Group group, Speciality speciality) =>

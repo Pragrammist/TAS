@@ -5,15 +5,14 @@ using TreatyAutomateSystem.Helpers;
 
 [Route("{controller}")]
 public class AdminController : Controller
-{
+{   
+    const string TEST_DOCS_FOLDER = @"DocsTest/";
+    const string DOCS_FOLDER = @"Docs/";
     readonly DbService _dbService;
-    readonly StudentOneprofileTreatyService _oneprofileTreatyService;
-    readonly ManyprofilesTreatyService _manyprofilesTreatyService;
-    public AdminController(DbService dbService, StudentOneprofileTreatyService oneprofileTreatyService, ManyprofilesTreatyService manyprofilesTreatyService)
+    public AdminController(DbService dbService)
     {
         _dbService = dbService;
-        _oneprofileTreatyService = oneprofileTreatyService;
-        _manyprofilesTreatyService = manyprofilesTreatyService;
+       
     }
     [Route("{pageType}")]
     public async Task<IActionResult> Index(AdminPageType pageType, string? group = null)
@@ -88,11 +87,88 @@ public class AdminController : Controller
     }
 
     [HttpPost("admin/files/treaty")]
-    public IActionResult UploadTreatyTemplate(UploadTreatyModel model)
+    public async Task<IActionResult> UploadTreatyTemplate(UploadTreatyModel model)
+    {
+        if(model.TreatyTemplate is null)
+            return BadRequest("вы не выбрали файл"); 
+
+        var testDocsPath = await WriteToTestFolder(model);
+        var testRes = await TestTreatyTemplate(testDocsPath, model.TreateType);
+        await DeleteFileFromTestAndSaveIfSuccess(testRes, testDocsPath);
+        if(testRes.IsSuccess)
+            return File(testRes.Stream, "application/vnd.openxmlformats", $"{model.TreateType.GetValueForTreatyFromDescription()}(тест).docx");
+        else
+            return BadRequest(testRes.Message);
+    }
+    async Task<string> WriteToTestFolder(UploadTreatyModel model)
     {
         var fileName = GetTemplateProfileName(model);
-        //d_manyprofilesTreatyService.InsertDataToTreaty();
-        return Content($"{model.TreateType} {model.TreatyTemplate.FileName}");
+        
+        
+        string testDocsPath = TEST_DOCS_FOLDER+fileName;
+        using var writeStream = new System.IO.FileStream(testDocsPath, FileMode.OpenOrCreate, FileAccess.Write);
+        using var stream = model.TreatyTemplate.OpenReadStream();
+        
+        await stream.CopyToAsync(writeStream);
+
+        return testDocsPath;
     }
+
+    record TestTreatyResult(Stream Stream, bool IsSuccess = true, string? Message = null);
+    async Task<TestTreatyResult> TestTreatyTemplate(string temPath, TreatyType treatyType)
+    {
+        
+        try
+        {
+            var stream = treatyType == TreatyType.ONE_PROFILE 
+            ? await OneProfileTreatyServiceToTest(temPath) 
+            : await ManyProfileTreatyServiceToTest(temPath);
+            return new TestTreatyResult(stream);
+        }
+        catch(AppExceptionBase ex)
+        {
+            return new TestTreatyResult(new MemoryStream(), false, ex.Message);
+        }
+        catch
+        {
+            return new TestTreatyResult(new MemoryStream(), false, $"Неизвестная ошибка проверьте файл");
+        }
+        
+    }
+    async Task DeleteFileFromTestAndSaveIfSuccess(TestTreatyResult res, string treatyPath)
+    {
+        if(res.IsSuccess)
+            await WriteToDocsFolder(treatyPath);
+        
+        System.IO.File.Delete(treatyPath);
+    }
+    async Task WriteToDocsFolder(string treatyPath)
+    {
+        using var fileWriteStream = System.IO.File.OpenWrite(DOCS_FOLDER+Path.GetFileName(treatyPath));
+        using var fielReadStream = System.IO.File.OpenRead(treatyPath);
+        await fielReadStream.CopyToAsync(fileWriteStream);
+    }
+
+
+    async Task<Stream> OneProfileTreatyServiceToTest(string savedPath) 
+    {   
+        var service = new StudentOneprofileTreatyService(
+                new TreatyServiceBase.Options(TEST_DOCS_FOLDER, savedPath)
+            );
+        return await service.InsertDataToTreaty(StudentOneprofileTreatyService.StudentTreatyData.GetStudentTestData());
+    }
+        
+
+    async Task<Stream> ManyProfileTreatyServiceToTest(string savedPath)
+    {
+        var service = new ManyprofilesTreatyService(
+                new TreatyServiceBase.Options(TEST_DOCS_FOLDER, savedPath)
+            );
+
+        return await service.InsertDataToTreaty(TreatyServiceBase.TreatyData.GetTestData());
+    }
+        
+
+    
     string GetTemplateProfileName(UploadTreatyModel model) => $"{model.TreateType.GetValueForTreatyFromDescription()}{Path.GetExtension(model.TreatyTemplate.FileName)}";
 }

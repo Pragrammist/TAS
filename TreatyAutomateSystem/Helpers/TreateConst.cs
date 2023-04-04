@@ -3,7 +3,7 @@ namespace TreatyAutomateSystem.Helpers;
 
 public static class TreateConst
 {
-    public const string PARAGRAPH_PART_FOR_COMPANY_NAME_REGEX = @"стороны,?\s*и\s*_*\s*";
+    public const string PARAGRAPH_PART_FOR_COMPANY_NAME_REGEX = @"стороны,?\s*и\s*_+\s*";
 
     public const string PARAGRAPH_PART_FOR_PRACTICE_DIRECTOR_NAME = @"лице\s*_+\s*";
 

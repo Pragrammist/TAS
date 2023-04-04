@@ -7,31 +7,39 @@ using DocumentFormat.OpenXml;
 using static TreatyAutomateSystem.Helpers.TreateConst;
 using TreatyAutomateSystem.Helpers;
 
+
 namespace TreatyAutomateSystem.Services;
 
 
-public class S{
-   
-    
 
-}
 
-public interface ITreatyService<InputDataType>
+
+public abstract class TreatyServiceBase
 {
-    Stream InsertDataToTreate(InputDataType data);
-
-    Stream TestTreatyTemplate(InputDataType data, Stream treatyTemplate);
-}
-
-public abstract class TreatyServiceBase//<InputDataType> : ITreatyService<InputDataType>
-{
-    protected readonly Options _options;
+    protected Options _options;
     public record TreatyData (
         string NaOsnovanii, 
         string CompanyName, 
         string PracticeDirector, 
         string CompanyRicvizit
-    );
+    )
+    {
+        public static TreatyData GetTestData() => new TreatyServiceBase.TreatyData(
+            "Устава", 
+            "ГБУ ДО РО \"СШОР № 13\"", 
+            "директора Гундарева Сергея Викторовича", 
+            $@"ГБУ ДО РО {"\""}СШОР № 13{"\""}
+            Юридический адрес
+            347900, Ростовская область, город Таганрог, ул. Ленина, д. 212-4
+            ИНН 
+            6154065344
+            КПП
+            615401001
+            ОГРН
+            1026102592966
+            ");
+        
+    }
     
     public record Options(
         string FolderPathToSave, 
@@ -42,8 +50,7 @@ public abstract class TreatyServiceBase//<InputDataType> : ITreatyService<InputD
     {
         _options = options;
     }
-    
-    //public abstract Stream InsertDataToTreate(InputDataType data);
+    public abstract Task<Stream> InsertDataToTreaty(TreatyData data);
     
 
     public void TestTreatyTemplate(TreatyData data, Stream treatyTemplate)
@@ -140,7 +147,7 @@ public abstract class TreatyServiceBase//<InputDataType> : ITreatyService<InputD
 
     protected void InsertDataToParagraphInsteadUnderlineWhereHasMatchedString(InsertionDataArguments<string> arg)
     {
-        var p = arg.Body.FirstOrDefault(s => s is Paragraph && s.InnerText.HasAnyRegexSignature(arg.Regexs)) ?? throw new AppExceptionBase($"не найден параграф для {arg.DataName}");
+        var p = arg.Body.FirstOrDefault(s => s is Paragraph && s.InnerText.HasAnyRegexSignature(arg.Regexs)) ?? throw new AppExceptionBase($"не найден параграф с {arg.DataName}");
         var run = p.First(r => r is Run && r.InnerText.HasAnyRegexSignature(arg.Regexs));
 
         ReplaceUnderlineText(run, arg.Data, arg.Regexs);

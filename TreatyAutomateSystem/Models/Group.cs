@@ -3,7 +3,7 @@ namespace TreatyAutomateSystem.Models;
 
 public class UploadTreatyModel
 {
-    public TreateType TreateType { get; set; }
+    public TreatyType TreateType { get; set; }
 
     public IFormFile TreatyTemplate { get; set; } = null!;
 }

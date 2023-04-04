@@ -14,14 +14,14 @@ public class ManyprofilesTreatyService : TreatyServiceBase
     {
         
     }
-    
-    
 
-    public async Task<Stream> InsertDataToTreaty(TreatyData data)
+
+    public override async Task<Stream> InsertDataToTreaty(TreatyData data)
     {
         using var doc = InsertBaseDataToNewCopyOfDocument(data);
 
         return await SaveDocAsStream(doc, data);
     }
+
     
 }
