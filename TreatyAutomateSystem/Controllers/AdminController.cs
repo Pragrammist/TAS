@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TreatyAutomateSystem.Models;
 using TreatyAutomateSystem.Services;
 using TreatyAutomateSystem.Helpers;
+using TreatyAutomateSystem.Filters;
 
 [Route("{controller}")]
 public class AdminController : Controller
@@ -14,6 +15,7 @@ public class AdminController : Controller
         _dbService = dbService;
        
     }
+    [CustomExceptionFilter]
     [Route("{pageType}")]
     public async Task<IActionResult> Index(AdminPageType pageType, string? group = null)
     {
@@ -86,6 +88,7 @@ public class AdminController : Controller
         );
     }
 
+    [CustomExceptionFilter]
     [HttpPost("admin/files/treaty")]
     public async Task<IActionResult> UploadTreatyTemplate(UploadTreatyModel model)
     {

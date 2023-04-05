@@ -89,6 +89,8 @@ public abstract class TreatyServiceBase
     }
     WordprocessingDocument GetCopyOfDocument(string path)
     {
+        if(!File.Exists(path))
+            throw new AppExceptionBase("Вы не загрузили образец договора");
         var original = WordprocessingDocument.Open(_options.TreatePlatePath, true);
         var doc = (WordprocessingDocument)original.Clone();
         original.Close();

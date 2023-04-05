@@ -36,18 +36,18 @@ if (!app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-app.Use(async(context, next) =>
-{
-    try{
-        await next.Invoke(); 
-    }catch(AppExceptionBase ex)
-    {
-        context.Response.Headers["Content-Type"] = "text/plain; charset=utf-8";
-        context.Response.StatusCode = 400;
-        await context.Response.WriteAsync(ex.Message);
-    }
+// app.Use(async(context, next) =>
+// {
+//     try{
+//         await next.Invoke(); 
+//     }catch(AppExceptionBase ex)
+//     {
+//         context.Response.Headers["Content-Type"] = "text/plain; charset=utf-8";
+//         context.Response.StatusCode = 400;
+//         await context.Response.WriteAsync(ex.Message);
+//     }
     
-});
+// });
 
 app.UseStaticFiles();
 

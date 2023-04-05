@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TreatyAutomateSystem.Models;
 using TreatyAutomateSystem.Services;
 using TreatyAutomateSystem.Helpers;
+using TreatyAutomateSystem.Filters;
 
 namespace TreatyAutomateSystem.Controllers;
 
@@ -39,6 +40,7 @@ public class HomeController : Controller
         return View();
     }
     
+    [CustomExceptionFilter]
     [HttpPost("/files/uploadgroup")]
     public async Task<IActionResult> UploadGroupAndStudentsFile(IFormFile file)
     {
@@ -49,6 +51,7 @@ public class HomeController : Controller
     }
 
 
+    [CustomExceptionFilter]
     [HttpPost("/files/uploadrikvizit")]
     public async Task<IActionResult> UploadRikvizitFile(IFormFile file)
     {
@@ -58,6 +61,7 @@ public class HomeController : Controller
         return Ok();
     }
 
+    [CustomExceptionFilter]
     [HttpPost("/files/uploadpractic")]
     public async Task<IActionResult> UploadPracticDataFile(IFormFile file)
     {
@@ -67,6 +71,7 @@ public class HomeController : Controller
         return Ok();
     }
     
+    [CustomExceptionFilter]
     [HttpGet("/companies")]
     public IActionResult GetCompanies()
     {
@@ -75,6 +80,7 @@ public class HomeController : Controller
         return new ObjectResult(comps);
     }
 
+    [CustomExceptionFilter]
     [HttpGet("/students/{query}")]
     public async Task<IActionResult> FindStudentsAsync(string query)
     {
@@ -84,6 +90,7 @@ public class HomeController : Controller
         return new ObjectResult(students);
     }
     
+    [CustomExceptionFilter]
     [HttpGet("/files/generate")]
     public async Task<IActionResult> GenerateDocx(string studentId, string companyName)
     {    
@@ -96,6 +103,7 @@ public class HomeController : Controller
         return file;
     }
 
+    [CustomExceptionFilter]
     [HttpGet("/files/generatemanyprofile")]
     public async Task<IActionResult> GenerateManyProfilesDocx(string companyName)
     {
