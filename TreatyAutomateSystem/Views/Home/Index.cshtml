@@ -3,8 +3,6 @@
 }
 
 
-<script src="lib/jquery/dist/jquery.min.js"></script>
-
 
 
 
@@ -12,46 +10,46 @@
 
 
 @section Header{
-    <div class="header-el">
-        <input type="search" name="" id="search-query" placeholder="ФИО студента(договор)">
-    </div>
-    <div class="header-el">
-        <a asp-action="Index" asp-controller="Admin"asp-route-pageType="@AdminPageType.Groups">Просмотр данных</a>
-    </div>
-    <div class="header-el">
-        <button id="manyprofilesTreatyId">Сгенерировать многопрофильный договор</button>
-    </div>  
-    <div class="header-el">
-        <select id="companySelectorId">
-        </select>
-    </div>
+    <nav class="navbar navbar-expand-xxl navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                        <input class="form-control" id="search-query" type="search" placeholder="Поиск по фио" aria-label="Search">
+                    </li>
+                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                        <div class="input-group">
+                            <button class="btn btn-secondary" id="manyprofilesTreatyId" type="button">Многопрофильный</button>
+                            <select class="form-select" id="companySelectorId">
+                            </select>
+                        </div>                          
+                    </li>
+                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                        <div class="input-group">
+                            <button class="btn btn-secondary" id="oneProfileTreatyId" type="button">Однопрофильный</button>
+                            <input class="form-control btn-secondary" id="uploadFile" type="file"/>
+                            <select class="form-select" id="selectionExcelType">
+                                <option selected value="/files/uploadgroup">Группа с студентами</option>
+                                <option value="/files/uploadrikvizit">Данные по компаниям</option>
+                                <option value="/files/uploadpractic">Данные по практикам групп</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                        <a asp-action="Index" asp-controller="Admin"asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary" aria-current="page">Просмотр данных</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 }
-
-<div class="header-el">
-    <div>
-        <input type="file" name="" id="uploadGroupAndStudentsFile" accept=".xls" placeholder="Ученики и группа">
-        <button id="uploadGroupAndStudentsButton">Ученики и группа</button>
-    </div>
-</div>
-<div>
-    <div>
-        <input type="file" name="" id="uploadRekvizitFile" accept=".xls" placeholder="Реквизиты">
-        <button id="uploaduploadRekvizitButton">Реквизиты</button>
-    </div>
-</div>
-<div>
-    <div>
-        <input type="file" name="" id="uploadPracticeDataFile" accept=".xls" placeholder="Данные по практике">
-        <button id="uploadPracticeDataButton">Данные по практике</button>
-    </div>
-</div>
 
 
 <script>
     $(function(){
-        UploadFile("#uploadGroupAndStudentsButton", "#uploadGroupAndStudentsFile", "/files/uploadgroup");
-        UploadFile("#uploaduploadRekvizitButton", "#uploadRekvizitFile", "/files/uploadrikvizit");
-        UploadFile("#uploadPracticeDataButton", "#uploadPracticeDataFile", "/files/uploadpractic");
         FillCompanySelectorId();
         function FillCompanySelectorId()
         {
@@ -59,7 +57,7 @@
                 for(let i = 0; i < data.length; i++)
                 {
                     let options = $("#companySelectorId");
-                    options.append(new Option(data[i], data[i]));
+                    options.append(new Option(data[i], data[i], i == 0));
                 }
             });
         }
@@ -70,17 +68,17 @@
             $("#message").slideToggle("slow");
             $("#message").delay(3000).slideToggle("slow");
         }
-        function UploadFile(buttonId, fileId, urlUpload)
+        $("#oneProfileTreatyId").click(function()
         {
-            $(buttonId).click(function(){
-            let files = $(fileId)[0].files;
-            if(files.length > 0 ){
+            let files = $("#uploadFile")[0].files;
+            if(files.length > 0 )
+            {
                 let fd = new FormData();
                 fd.append("upload_file", true);
                 fd.append("file", files[0], files[0].name)
                 $.ajax(
                     {
-                        url: urlUpload,
+                        url: $("#selectionExcelType").val(),
                         data: fd,
                         processData: false,
                         contentType: false,
@@ -94,10 +92,9 @@
                         }
                     }
                 );
-                    
-                }
-            });
-        }
+            }
+        });
+        
         
         
         let searchResIsShown = false;
