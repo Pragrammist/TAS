@@ -28,45 +28,23 @@
 
                 let trEl = $("<tr>").attr("id", `student-${id}`);
 
-                let inputNameEl = $("<input>").attr("value", name);
-                let nameTdEl = $("<td>").attr("id", "student-name-"+id).append(inputNameEl);
-                trEl.append(nameTdEl);
+                
+                trEl.append(`<td>${name}</td>`);
                 
 
-                let groupOptionObj = $("<option selected/>").text(groupInSelect).val(groupInSelect);
-                let selectGroupEl = $("<select>").append(groupOptionObj);
-                let groupTdEl = $("<td>").attr("id", "student-group-"+id).append(selectGroupEl);
-                trEl.append(groupTdEl);
+                trEl.append(`<td>${groupInSelect}</td>`);
 
 
-                let selectCourseEl = $("<select>")
-                    .append("<option>1</option>")
-                    .append("<option>2</option>")
-                    .append("<option>3</option>")
-                    .append("<option>4</option>")
-                    .append("<option>5</option>");
-                selectCourseEl.val(courseInSelect);
-                let courseTdEl = $("<td>").attr("id", "student-course-"+id).append(selectCourseEl);
-                trEl.append(courseTdEl);
+                trEl.append(`<td class="d-none d-sm-table-cell">${courseInSelect}</td>`);
 
 
-                let specOptionObj = $("<option selected/>").text(specInSelect).val(specInSelect);
-                let selectSpecEl = $("<select>").append(specOptionObj);
-                let tdSpecEl = $("<td>").attr("id","student-specialization-"+id).append(selectSpecEl);
-                trEl.append(tdSpecEl);
+                trEl.append(`<td class="d-none d-sm-table-cell">${specInSelect}</td>`);
                 
 
-                let selectCondEl = $("<select>")
-                    .append("<option value='0'>Беспл</option>")
-                    .append("<option value='1'>Пл</option>");
-                selectCondEl.val(condType);
-                let tdCondEl = $("<td>").attr("id", "student-cond-"+id).append(selectCondEl);
-                trEl.append(tdCondEl);        
+                let condText = condType == 0 ? "Беспл" : "Пл";
+                trEl.append(`<td>${condText}</td>`);       
 
-                let buttonDelEl = $('<button type="button">Удалить</button>').attr("id", "b-del-"+id);
-                let tdEl = $("<td>").append(buttonDelEl);
-                trEl.append(tdEl);
-                $(".students-table-update-buttons").before(trEl);
+                $("tbody").append(trEl);
 
             }
             
@@ -79,23 +57,36 @@
         });
     });    
 </script>
-<option></option>
-<div>
-    <table  class="students-table" cellspacing="5" cellpadding="10" width="auto">
-        <tr class="students-table-headers">
-            <th>ФИО</th>
-            <th>ГРУППА</th>
-            <th>КУРС</th>
-            <th>Специальность</th>
-            <th>Платная/Бесплатная</th>
-        </tr>
-        
-        <tr class="students-table-update-buttons">
-            @* <td>
-                <div>
-                    <button type="submit">Сохранить</button>
-                </div>
-            </td> *@
-        </tr>
-    </table>
-</div>
+
+<main class="d-flex mt-3">
+        <ul class="list-group-flush d-none d-lg-block w-sm-50 w-md-25 me-4">
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary">Группы</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties" class="nav-link text-secondary">Специальности</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies" class="nav-link text-secondary">Компании</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties" class="nav-link text-secondary">Шаблоны договоров</a>
+            </li>
+        </ul>
+        <table class="table bg-light">
+            <thead>
+              <tr>
+                <th scope="col">ФИО</th>
+                <th scope="col">ГРУППА</th>
+                <th class="d-none d-sm-table-cell" scope="col">КУРС</th>
+                <th class="d-none d-sm-table-cell" scope="col">СПЕЦИАЛЬНОСТЬ</th>
+                <th scope="col">ОСНОВА</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                
+              </tr>
+            </tbody>
+          </table>
+    </main>

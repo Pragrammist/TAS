@@ -1,22 +1,36 @@
 
-<div>
-    <h4>Шаблон договора</h4>
+<ul class="list-group-flush d-none d-lg-block w-sm-50 w-md-25 me-4">
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary">Группы</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties" class="nav-link text-secondary">Специальности</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies" class="nav-link text-secondary">Компании</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties" class="nav-link text-secondary">Шаблоны договоров</a>
+            </li>
+        </ul>
+<main class="d-flex mt-3">
     <div>
-        <form action="admin/files/treaty" enctype="multipart/form-data" method="post">
+        <h4>Шаблон договора</h4>
+        <form action="admin/files/treaty" enctype="multipart/form-data" method="post" class="row g-3">
             <div>
-                <label for="model.TreateType">Выберете тип договора</label>
-                <br>
-                <select name="model.TreateType">
-                    <option value="0">Однопрофильный</option>
+                <select class="form-select" name="model.TreateType" id="treatyTypeSelector">
+                    <option value="0" selected>Однопрофильный</option>
                     <option value="1">Многопрофильный</option>
                 </select>
+                <label for="treatyTypeSelector">Выберете тип договора</label>
             </div>
             <div>
-                <label for="model.TreatyTemplate">Загрузите договор</label>
-                <br>
-                <input type="file" name="model.TreatyTemplate" accept=".docx">
+                <input class="btn btn-primary" type="file" id="treatyTemplateFile" name="model.TreatyTemplate" accept=".docx">
+                <label for="treatyTemplateFile">Загрузите договор</label>
             </div>  
-            <input type="submit" value="загрузить">
+            <input class="btn btn-primary" type="submit" value="загрузить">
         </form>
     </div>
-</div>
+    
+    
+</main>

@@ -23,43 +23,47 @@
 
 @section Header
 {
-    <div class="header-el">
-        <a asp-action="Index" asp-controller="Home">Главная</a>
-    </div>
-    <div class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Просмотр данных</a>
-    </div>
-    <div class="header-el">
-        <input type="search" name="" id="search-group-index" placeholder="номер группы">
-    </div>
-    @* <div class="header-el">
-        <input type="search" name="" id="" placeholder="ФИО студента">
-    </div> *@
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item ms-1 mt-sm-0 mt-3">
+                        <input class="form-control" type="search" id="search-group-index" placeholder="Поиск по группе" aria-label="Search">
+                    </li>
+                    <li class="nav-item ms-1 mt-sm-0 mt-3">
+                        <a asp-action="Index" asp-controller="Home"  class="nav-link text-secondary" aria-current="page" >Главная</a>
+                    </li>
+                    <li class="nav-item ms-1 d-lg-none mt-sm-0 mt-3">
+                        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary">Группы</a>
+                    </li>
+                    <li class="nav-item ms-1 d-lg-none mt-sm-0 mt-3">
+                        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties" class="nav-link text-secondary">Специальности</a>
+                    </li>
+                    <li class="nav-item ms-1 d-lg-none mt-sm-0 mt-3">
+                        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies" class="nav-link text-secondary">Компании</a>
+                    </li>
+                    <li class="nav-item ms-1 d-lg-none mt-sm-0 mt-3">
+                        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties" class="nav-link text-secondary">Шаблоны договоров</a>
+                    </li>
+                </ul>
+            </div>
+        </div>        
+    </nav>
 }
 
-@section LSideBar
-{
-    
-}
-<ul>
+
+@* <ul>
     <li class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups">Группы</a>
-    </li class="header-el">
-    @* <li class="header-el">
         <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Courses">Курсы</a>
-    </li class="header-el"> *@
-    <li class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties">Специальности</a>
-    </li>
-    <li class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies">Компании</a>
-    </li>
-    <li class="header-el">
-        <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties">Шаблоны договоров</a>
-    </li>
+    </li class="header-el"> 
     @* <li class="header-el">
         <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.CmpTreaties">Шаблоны договоров(компании)</a>
-    </li> *@
-</ul>
+    </li>
+</ul> *@
+
+
 @await Html.PartialAsync(calculatedPartialViewName, Model)
 

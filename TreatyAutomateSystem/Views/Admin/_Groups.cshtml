@@ -14,104 +14,64 @@
                 let courseNum = group.courseNum;
                 
 
-                let trEl = $("<tr>").attr("id", `group-${name}`);
+                let trEl = $("<tr>");
                 
+                trEl.append(`<td>${name}</td>`);
+
+                trEl.append(`<td class="d-none d-sm-table-cell">${spec}</td>`);
                 
-                let inputNameEl = $("<input>").attr("value", name);
-                let nameTdEl = $("<td>").append(inputNameEl);
-                trEl.append(nameTdEl);
-
-                let specOptionObj = $("<option selected/>").text(spec).val(spec);
-                let selectSpecEl = $("<select>").append(specOptionObj);
-                let tdSpecEl = $("<td>").append(selectSpecEl);
-                trEl.append(tdSpecEl);
-
-                let selectFacult = $("<select>")
-                    .append("<option value='0'>СПО</option>")
-                    .append("<option value='1'>ВО</option>");
-                selectFacult.val(facult);
-                let tdFacultEl = $("<td>").append(selectFacult);
-                trEl.append(tdFacultEl);
+                let facultString = facult == 0 ? "СПО" : "ВО";
+                trEl.append(`<td class="d-none d-lg-table-cell" >${facultString}</td>`);
                 
-                let practiceStartDateTimeEl = $("<time>")
-                                                .text(practiceStart.toLocaleString('ru', {  weekday: "long",year: "numeric",month: "long", day: "numeric"} ) )
-                let tdPrStart = $("<td>").append(practiceStartDateTimeEl);  
-                trEl.append(tdPrStart);
+                let practiceStartDateTimeText = practiceStart.toLocaleString('ru', {  weekday: "long",year: "numeric",month: "long", day: "numeric"} );
+                trEl.append(`<td>${practiceStartDateTimeText}</td>`);
 
 
-                let practiceEnndDateTimeEl = $("<time>")
-                                                .text(practiceEnd.toLocaleString('ru', {  weekday: "long", year: "numeric",month: "long", day: "numeric"}))
-                let tdPrEnd = $("<td>").append(practiceEnndDateTimeEl);  
-                trEl.append(tdPrEnd);
+                let practiceEnndDateTimeText = practiceEnd.toLocaleString('ru', {  weekday: "long", year: "numeric",month: "long", day: "numeric"});
+                trEl.append(`<td>${practiceEnndDateTimeText}</td>`);
 
-                let practiceTypeEl = $("<select>")
-                                        .append("<option value='0'>преддипломная практика</option>")
-                                        .append("<option value='1'>учебная практика</option>")
-                                        .append("<option value='2'>производственная практика</option>");
-                                        
-                practiceTypeEl.val(practiceType);
-                let tdPracticeEl = $("<td>").append(practiceTypeEl);
-                trEl.append(tdPracticeEl);
+                
+                let practiceTypeText = practiceType == 0 ? "Преддипломная практика" : practiceType == 1 ? "Учебная практика" : "Производственная практика";
+                trEl.append(`<td class="d-none d-sm-table-cell">${practiceTypeText}</td>`);
 
-                let courseNumEl = $("<select>")
-                                        .append("<option>1</option>")
-                                        .append("<option>2</option>")
-                                        .append("<option>3</option>") 
-                                        .append("<option>4</option>")
-                                        .append("<option>5</option>");             
-                courseNumEl.val(courseNum);
-                let tdCourseEl = $("<td>").append(courseNumEl);
-                trEl.append(tdCourseEl);
-                $(".groupse-counters-update").before(trEl);
+                trEl.append(`<td class="d-none d-lg-table-cell">${courseNum}</td>`);
+
+                $("tbody").append(trEl);
             }
         });
         
     });
 </script>
 
-<div>
-    <table class="students-table">
-        <tr>
-            @* <td>
-                <div class="cell-help-message">
-                    Поиск групп
-                </div>
-                <div>
-                    <input type="search" name="" id="" placeholder="номер группы">
-                </div>
-            </td> *@
-        </tr>
-        <tr class="students-table-headers">
-            <th>ГРУППА</th>
-            <th>Специальность</th>
-            <th>Факультатив</th>
-            <th>Начало</th>
-            <th>Конец</th>
-            <th>Тип практики</th>
-            <th>КУРС</th>
-        </tr>       
-        <tr class="groupse-counters-update">
-            @* <td>
-                <div>
-                    <button type="submit">Уменьшить у всех курс</button>
-                </div>
-            </td>
-            <td>
-                <div>
-                    <button type="submit">Увеличить у всех курс</button>
-                </div>
-            </td> *@
-        </tr>
-        @* <tr>
-            <td>
-                <div>
-                    <button type="submit">Сохранить</button>
-                </div>
-            </td>
-            <td>
-                <button>Следующая</button>
-                <button>Назад</button>
-            </td>    
-        </tr> *@
-    </table>
-</div>
+<main class="d-flex mt-3">
+        <ul class="list-group-flush d-none d-lg-block w-sm-50 w-md-25 me-4">
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary">Группы</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties" class="nav-link text-secondary">Специальности</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies" class="nav-link text-secondary">Компании</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties" class="nav-link text-secondary">Шаблоны договоров</a>
+            </li>
+        </ul>
+        <table class="table bg-light">
+            <thead>
+              <tr>
+                <th scope="col">ГРУППА</th>
+                <th class="d-none d-sm-table-cell" scope="col">СПЕЦИАЛЬНОСТЬ</th>
+                <th class="d-none d-lg-table-cell" scope="col">ФАКУЛЬТАТИВ</th>
+                <th scope="col">НАЧАЛО</th>
+                <th scope="col">КОНЕЦ</th>
+                <th class="d-none d-sm-table-cell" scope="col">ТИП ПРАКТКИ</th>
+                <th class="d-none d-lg-table-cell" scope="col">КУРС</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+          </table>
+    </main>

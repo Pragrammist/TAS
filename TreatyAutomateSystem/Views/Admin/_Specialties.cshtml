@@ -12,15 +12,11 @@
                 
                 let trEl = $("<tr>").attr("id", `spec-${name}`);
 
-                let inputNameEl = $("<input>").attr("value", name);
-                let nameTdEl = $("<td>").append(inputNameEl);
-                trEl.append(nameTdEl);
+                trEl.append(`<td>${code}</td>`);
 
-                let inputCodeEl = $("<input>").attr("value", code);
-                let codeTdEl = $("<td>").append(inputCodeEl);
-                trEl.append(codeTdEl);
+                trEl.append(`<td>${name}</td>`);
 
-                $(".specialities-save").before(trEl);
+                $("tbody").append(trEl);
             }
 
 
@@ -28,13 +24,30 @@
     });
 </script>
 
-<table class="specialities-table">
-    
-    <tr class="specialities-save">
-        @* <td>
-            <div>
-                <button type="submit">Сохранить</button>
-            </div>
-        </td> *@
-    </tr>
-</table>
+<main class="d-flex mt-3">
+        <ul class="list-group-flush d-none d-lg-block w-sm-50 w-md-25 me-4">
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary">Группы</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties" class="nav-link text-secondary">Специальности</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies" class="nav-link text-secondary">Компании</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties" class="nav-link text-secondary">Шаблоны договоров</a>
+            </li>
+        </ul>
+        <table class="table bg-light">
+            <thead>
+              <tr>
+                <th scope="col">КОД</th>
+                <th scope="col">СПЕЦИАЛЬНОСТЬ</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+          </table>
+    </main>

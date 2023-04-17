@@ -15,41 +15,49 @@
                 let trEl = $("<tr>").attr("id", `comp-${name}`);
                 
                 
-                let inputNameEl = $("<input>").attr("value", name);
-                let nameTdEl = $("<td>").append(inputNameEl);
-                trEl.append(nameTdEl);
+                
+                trEl.append(`<td>${name}</td>`);
 
-                let inputDirectorNameEl = $("<input>").attr("value", directoreName);
-                let directorNameTdEl = $("<td>").append(inputDirectorNameEl);
-                trEl.append(directorNameTdEl);
+                trEl.append(`<td>${directoreName}</td>`);
 
-                let inputNaOsnovaniiEl = $("<input>").attr("value", naOsnovanii);
-                let nameNaOsnovaniiTdEl = $("<td>").append(inputNaOsnovaniiEl);
-                trEl.append(nameNaOsnovaniiTdEl);
-                $(".companies-savebutton").before(trEl);
+                trEl.append(`<td class="d-none d-sm-table-cell">${naOsnovanii}</td>`);
+                
 
-                let ricvizitElement = $("<textarea>").text(ricvizit);
-                let ricvizitElementTdEl = $("<td>").append(ricvizitElement);
-                trEl.append(ricvizitElementTdEl);
+                trEl.append(`<td class="d-none d-md-table-cell">${ricvizit}</td>`);
 
+                $("tbody").append(trEl);
 
             }
         })
     });
 </script>
 
-<table>
-    <tr class="students-table-headers">
-        <th>Название компании</th>
-        <th>Руководитель практики</th>
-        <th>На основани</th>
-        <th>Реквизиты</th>
-    </tr>
-    <tr class="companies-savebutton">
-        @* <td>
-             <div>
-                <button type="submit">Сохранить</button>
-            </div>
-        </td> *@
-    </tr>
-</table>
+<main class="d-flex mt-3">
+        <ul class="list-group-flush d-none d-lg-block w-sm-50 w-md-25 me-4">
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary">Группы</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Specialties" class="nav-link text-secondary">Специальности</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.Companies" class="nav-link text-secondary">Компании</a>
+            </li>
+            <li class="list-group-item bg-light">
+                <a asp-action="Index" asp-controller="Admin" asp-route-pageType="@AdminPageType.StTreaties" class="nav-link text-secondary">Шаблоны договоров</a>
+            </li>
+        </ul>
+        <table class="table bg-light">
+            <thead>
+              <tr>
+                <th scope="col">НАЗВАНИЕ КОМПАНИИ</th>
+                <th scope="col">РУКОВОДИТЕЛЬ ПРАКТИКИ</th>
+                <th class="d-none d-sm-table-cell" scope="col">НА ОСНОВАНИИ</th>
+                <th class="d-none d-md-table-cell" scope="col">РЕКВИЗИТЫ</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+    </main>

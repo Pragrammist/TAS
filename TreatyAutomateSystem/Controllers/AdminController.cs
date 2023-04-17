@@ -132,9 +132,9 @@ public class AdminController : Controller
         {
             return new TestTreatyResult(new MemoryStream(), false, ex.Message);
         }
-        catch
+        catch(Exception ex)
         {
-            return new TestTreatyResult(new MemoryStream(), false, $"Неизвестная ошибка проверьте файл");
+            return new TestTreatyResult(new MemoryStream(), false, $"Неизвестная ошибка проверьте файл {ex.Message}");
         }
         
     }
