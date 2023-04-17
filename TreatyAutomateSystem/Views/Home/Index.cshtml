@@ -17,19 +17,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                    <li class="nav-item ms-3 mt-xxl-0 mt-3">
                         <input class="form-control" id="search-query" type="search" placeholder="Поиск по фио" aria-label="Search">
                     </li>
-                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                    <li class="nav-item ms-3 mt-xxl-0 mt-3">
                         <div class="input-group">
-                            <button class="btn btn-secondary" id="manyprofilesTreatyId" type="button">Многопрофильный</button>
+                            <button class="btn btn-primary" id="manyprofilesTreatyId" type="button">Многопрофильный</button>
                             <select class="form-select" id="companySelectorId">
                             </select>
                         </div>                          
                     </li>
-                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                    <li class="nav-item ms-3 mt-xxl-0 mt-3">
                         <div class="input-group">
-                            <button class="btn btn-secondary" id="oneProfileTreatyId" type="button">Однопрофильный</button>
+                            <button class="btn btn-primary" id="oneProfileTreatyId" type="button">Однопрофильный</button>
                             <input class="form-control btn-secondary" id="uploadFile" type="file"/>
                             <select class="form-select" id="selectionExcelType">
                                 <option selected value="/files/uploadgroup">Группа с студентами</option>
@@ -38,7 +38,7 @@
                             </select>
                         </div>
                     </li>
-                    <li class="nav-item ms-1 mt-xxl-0 mt-3">
+                    <li class="nav-item ms-3 mt-xxl-0 mt-3">
                         <a asp-action="Index" asp-controller="Admin"asp-route-pageType="@AdminPageType.Groups" class="nav-link text-secondary" aria-current="page">Просмотр данных</a>
                     </li>
                 </ul>
