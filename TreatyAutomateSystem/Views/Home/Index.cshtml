@@ -29,7 +29,8 @@
                     </li>
                     <li class="nav-item ms-3 mt-xxl-0 mt-3">
                         <div class="input-group">
-                            <input class="form-control btn-secondary" id="uploadFile" type="file"/>
+                            <button class="btn btn-primary" id="loadExcelButton" type="button">Загрузить</button>
+                            <input class="form-control btn-secondary" id="uploadFile" accept=".xls" type="file"/>
                             <select class="form-select" id="selectionExcelType">
                                 <option selected value="/files/uploadgroup">Группа с студентами</option>
                                 <option value="/files/uploadrikvizit">Данные по компаниям</option>
@@ -67,7 +68,7 @@
             $("#message").slideToggle("slow");
             $("#message").delay(3000).slideToggle("slow");
         }
-        $("#oneProfileTreatyId").click(function()
+        $("#loadExcelButton").click(function()
         {
             let files = $("#uploadFile")[0].files;
             if(files.length > 0 )
